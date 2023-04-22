@@ -93,25 +93,25 @@ BOOL CPlotDlg::OnInitDialog()
 	}
 
 	starting_value.SetWindowTextW(CString(L"0.0"));
-	ending_value.SetWindowTextW(CString(L"20.0"));
-	step.SetWindowTextW(CString(L"0.05"));
+	ending_value.SetWindowTextW(CString(L"10.0"));
+	step.SetWindowTextW(CString(L"0.007"));
 
 	symmetric_x.SetCheck(0);
 	symmetric_y.SetCheck(0);
 	symmetric_xy.SetCheck(0);
 
-	rotation_angle.SetWindowTextW(CString(L"0.0"));
+	rotation_angle.SetWindowTextW(CString(L"0.5"));
 
 	lines.SetCheck(1);
 
-	lines_quantity.SetWindowTextW(CString(L"8.0"));
-	rotation_angle_lines.SetWindowTextW(CString(L"0.25"));
+	lines_quantity.SetWindowTextW(CString(L"2.0"));
+	rotation_angle_lines.SetWindowTextW(CString(L"1.0"));
 
-	spray_radius.SetWindowTextW(CString(L"0.001"));
-	spray_quantity.SetWindowTextW(CString(L"40.0"));
-	spray_growing_factor.SetWindowTextW(CString(L"100.0"));
+	spray_radius.SetWindowTextW(CString(L"0.007"));
+	spray_quantity.SetWindowTextW(CString(L"20.0"));
+	spray_growing_factor.SetWindowTextW(CString(L"1619.0"));
 
-	allow_drawing.SetCheck(0);
+	allow_drawing.SetCheck(1);
 
 	CString points_quantity_string;
 
@@ -254,7 +254,7 @@ void CPlotDlg::Calculate()
 							double integer_part = 0.0;
 							double fractional_part = std::modf(1.0 * counter / original_list_size, &integer_part);
 
-							auto r_x = x_s + spray_radius_double * 1.0 * double(rand() - RAND_MAX / 2) / RAND_MAX;
+							auto r_x = x_s + spray_radius_double * 1.0 * double(rand() - RAND_MAX / 2) / RAND_MAX * spray_growing_factor_double * fractional_part;
 							auto r_y = y_s + spray_radius_double * 1.0 * double(rand() - RAND_MAX / 2) / RAND_MAX * spray_growing_factor_double * fractional_part;
 
 							list_x.push_back(r_x);

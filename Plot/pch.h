@@ -11,5 +11,7 @@
 #include "framework.h"
 
 #include <cmath>
+#include <string>
+#include <filesystem>
 
 #endif //PCH_H

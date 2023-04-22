@@ -14,6 +14,10 @@ protected:
 
     HBITMAP bitmap;
 
+    HBITMAP file_bitmap;
+
+    CImage image;
+
     DECLARE_MESSAGE_MAP()
 
     afx_msg void OnPaint();

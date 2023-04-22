@@ -103,6 +103,20 @@ void PlotArea::Plot(CDC &dc)
 
 				scale = square_size / absolute_maximum;
 
+				{
+					CRect rectangle
+					(
+						int(center_x - square_size / 2), int(center_y - square_size / 2),
+						int(center_x + square_size / 2), int(center_y + square_size / 2)
+					);
+
+					CBrush brush(1, RGB(0, 0, 255));
+
+					dc.Draw3dRect(LPCRECT(rectangle), RGB(0, 0, 255), RGB(0, 0, 255));
+
+					dc.FillRect(LPCRECT(rectangle), &brush);
+				}
+
 				if (show_axes)
 				{
 					dc.MoveTo(CPoint(int(x_shift) + int(0), int(center_y)));
@@ -111,6 +125,8 @@ void PlotArea::Plot(CDC &dc)
 					dc.MoveTo(CPoint(int(center_x), int(0)));
 					BOOL relult_2 = dc.LineTo(CPoint(int(center_x), int(square_size)));
 				}
+
+				dc.SetBkColor(RGB(255, 255, 255));
 
 				CString string;
 
@@ -126,7 +142,7 @@ void PlotArea::Plot(CDC &dc)
 
 					if (point.x > int(center_x)-half_square && point.x < int(center_x) +half_square && point.y > int(center_y)-half_square && point.y < int(center_y)+half_square)
 					{
-						dc.SetPixel(point, RGB(255, 0, 255));
+						dc.SetPixel(point, RGB(255, 255, 0));
 					}
 
 
@@ -161,41 +177,96 @@ void PlotArea::OnPaint()
 
 		CPaintDC dc(this);
 
-		CDC cdc;
-		
-		BOOL result = cdc.CreateCompatibleDC(&dc);
-
-		if (result == TRUE)
 		{
-			if (bitmap != nullptr)
+			CDC cdc;
+
+			BOOL result = cdc.CreateCompatibleDC(&dc);
+
+			if (result == TRUE)
 			{
-				DeleteObject(bitmap);
-
-				bitmap = nullptr;
-			}
-
-			bitmap = CreateCompatibleBitmap(dc, rectangle.Width(), rectangle.Height());
-
-			if (bitmap != nullptr)
-			{
-				HBITMAP old_bitmap = (HBITMAP)cdc.SelectObject(bitmap);
-
+				if (bitmap != nullptr)
 				{
-					CBrush white_brush(RGB(255, 255, 255));
+					DeleteObject(bitmap);
 
-					HBITMAP old_brush = (HBITMAP)cdc.SelectObject(white_brush);
-
-					cdc.FillRect(&rectangle, &white_brush);
-
-					SelectObject(cdc, old_brush);
+					bitmap = nullptr;
 				}
 
-				Plot(cdc);
+				bitmap = CreateCompatibleBitmap(dc, rectangle.Width(), rectangle.Height());
 
-				BOOL result = dc.BitBlt(0, 0, rectangle.Width(), rectangle.Height(), &cdc, 0, 0, SRCCOPY);
+				if (bitmap != nullptr)
+				{
+					HBITMAP old_bitmap = (HBITMAP)cdc.SelectObject(bitmap);
+
+					{
+						CBrush white_brush(RGB(255, 255, 255));
+
+						HBITMAP old_brush = (HBITMAP)cdc.SelectObject(white_brush);
+
+						cdc.FillRect(&rectangle, &white_brush);
+
+						SelectObject(cdc, old_brush);
+					}
+
+					Plot(cdc);
+
+					BOOL result = dc.BitBlt(0, 0, rectangle.Width(), rectangle.Height(), &cdc, 0, 0, SRCCOPY);
+
+					{
+						CDC file_cdc;
+
+						BOOL result = file_cdc.CreateCompatibleDC(&dc);
+
+						if (result == TRUE)
+						{
+
+							file_bitmap = CreateCompatibleBitmap(dc, rectangle.Height(), rectangle.Height());
+
+							if (file_bitmap != nullptr)
+							{
+								HBITMAP old_bitmap = (HBITMAP)file_cdc.SelectObject(file_bitmap);
+
+								{
+									CBrush white_brush(RGB(255, 255, 255));
+
+									HBITMAP old_brush = (HBITMAP)file_cdc.SelectObject(white_brush);
+
+									file_cdc.FillRect(&rectangle, &white_brush);
+
+									SelectObject(file_cdc, old_brush);
+								}
+
+								BOOL result = file_cdc.BitBlt(0, 0, rectangle.Height(), rectangle.Height(), &cdc, rectangle.Width() - rectangle.Height(), 0, SRCCOPY);
 
 
-				SelectObject(cdc, old_bitmap);
+								image.Attach(file_bitmap);
+
+								std::filesystem::path path = std::filesystem::current_path();
+
+								CStringW file_name;
+
+								auto date_time = COleDateTime::GetTickCount();
+
+								file_name.Format(CString(L"\\Plot%4d.%2d.%2d_%2d-%2d-%2d.png"), 
+									date_time.GetYear(), date_time.GetMonth(), date_time.GetDay(),
+									date_time.GetHour(), date_time.GetMinute(), date_time.GetSecond());
+
+								HRESULT saving_result = image.Save(CStringW(path.c_str()) + file_name);
+
+								image.Detach();
+
+								DeleteObject(file_bitmap);
+
+								file_bitmap = nullptr;
+							}
+						}
+					}
+
+					SelectObject(cdc, old_bitmap);
+
+					DeleteObject(bitmap);
+
+					bitmap = nullptr;
+				}
 			}
 		}
 
