@@ -78,7 +78,7 @@ public:
 
     bool in_paint;
 
-    void Plot(CDC &dc, CRect client_rectangle);
+    void Plot(CDC &dc);
 
     void DrawPicture();
 };
