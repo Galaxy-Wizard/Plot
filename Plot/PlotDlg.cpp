@@ -51,6 +51,8 @@ BEGIN_MESSAGE_MAP(CPlotDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_CALCULATE, &CPlotDlg::OnBnClickedButtonCalculate)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BUTTON_PLOT, &CPlotDlg::OnBnClickedButtonPlot)
+	ON_BN_CLICKED(IDC_BUTTON_COLORS, &CPlotDlg::OnBnClickedButtonColors)
+	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CPlotDlg::OnBnClickedButtonSave)
 END_MESSAGE_MAP()
 
 
@@ -119,6 +121,28 @@ BOOL CPlotDlg::OnInitDialog()
 
 	points_quantity.SetWindowTextW(points_quantity_string);
 
+	colors.resize(16);
+
+	colors[0] = RGB(255, 255, 0);
+	colors[1] = RGB(0, 0, 0);
+	colors[2] = RGB(0, 0, 0);
+	colors[3] = RGB(0, 0, 0);
+
+	colors[4] = RGB(0, 0, 0);
+	colors[5] = RGB(0, 0, 0);
+	colors[6] = RGB(0, 0, 0);
+	colors[7] = RGB(0, 0, 0);
+
+	colors[8] = RGB(0, 0, 255);
+	colors[9] = RGB(255, 255, 255);
+	colors[10] = RGB(0, 0, 0);
+	colors[11] = RGB(0, 0, 0);
+
+	colors[12] = RGB(0, 0, 0);
+	colors[13] = RGB(0, 0, 0);
+	colors[14] = RGB(0, 0, 0);
+	colors[15] = RGB(0, 0, 0);
+	
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -183,6 +207,8 @@ void CPlotDlg::OnBnClickedButtonCalculate()
 
 void CPlotDlg::Calculate()
 {
+	srand((unsigned int)GetTickCount());
+
 	list_x.clear();
 	list_y.clear();
 
@@ -403,6 +429,8 @@ void CPlotDlg::Calculate()
 	points_quantity.SetWindowTextW(points_quantity_string);
 
 	plot_area.SetLists(list_x, list_y);
+
+	plot_area.SetColors(colors);
 }
 
 void CPlotDlg::OnSize(UINT nType, int cx, int cy)
@@ -464,3 +492,25 @@ void CPlotDlg::OnBnClickedButtonPlot()
 	}
 }
 
+
+
+void CPlotDlg::OnBnClickedButtonColors()
+{
+	CColorDialog color_dialog;
+	auto result = color_dialog.DoModal();
+
+	if (result == IDOK)
+	{
+		auto clors_vector = color_dialog.GetSavedCustomColors();
+		for (size_t counter = 0; counter < 16; counter++)
+		{
+			colors[counter] = clors_vector[counter];
+		}
+	}
+}
+
+
+void CPlotDlg::OnBnClickedButtonSave()
+{
+	plot_area.DrawPicture();
+}

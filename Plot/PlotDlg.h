@@ -34,6 +34,8 @@ protected:
 
 	const double x_shift = 400.0;
 
+	std::vector<COLORREF> colors;
+
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
@@ -63,4 +65,6 @@ public:
 	CButton allow_drawing;
 	CButton show_axes;
 	CStatic points_quantity;
+	afx_msg void OnBnClickedButtonColors();
+	afx_msg void OnBnClickedButtonSave();
 };

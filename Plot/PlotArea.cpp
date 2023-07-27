@@ -5,7 +5,7 @@ BEGIN_MESSAGE_MAP(PlotArea, CStatic)
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
-void PlotArea::Plot(CDC &dc)
+void PlotArea::Plot(CDC& dc)
 {
 	if (list_x.size() != 0)
 	{
@@ -28,7 +28,7 @@ void PlotArea::Plot(CDC &dc)
 
 			for (auto l_x_i = list_x.begin(); l_x_i != list_x.end(); l_x_i++)
 			{
-				if (maximum_x<*l_x_i)
+				if (maximum_x < *l_x_i)
 				{
 					maximum_x = *l_x_i;
 				}
@@ -91,7 +91,7 @@ void PlotArea::Plot(CDC &dc)
 			if (absolute_maximum != 0.0)
 			{
 				double square_size(0.0);
-				
+
 				if (center_x > center_y)
 				{
 					square_size = center_y * 2.0;
@@ -110,9 +110,9 @@ void PlotArea::Plot(CDC &dc)
 						int(center_x + square_size / 2), int(center_y + square_size / 2)
 					);
 
-					CBrush brush(1, RGB(0, 0, 255));
+					CBrush brush(1, colors[8]);
 
-					dc.Draw3dRect(LPCRECT(rectangle), RGB(0, 0, 255), RGB(0, 0, 255));
+					dc.Draw3dRect(LPCRECT(rectangle), colors[8], colors[8]);
 
 					dc.FillRect(LPCRECT(rectangle), &brush);
 				}
@@ -126,7 +126,7 @@ void PlotArea::Plot(CDC &dc)
 					BOOL relult_2 = dc.LineTo(CPoint(int(center_x), int(square_size)));
 				}
 
-				dc.SetBkColor(RGB(255, 255, 255));
+				dc.SetBkColor(colors[9]);
 
 				CString string;
 
@@ -140,9 +140,9 @@ void PlotArea::Plot(CDC &dc)
 
 					auto half_square = int(square_size) / 2;
 
-					if (point.x > int(center_x)-half_square && point.x < int(center_x) +half_square && point.y > int(center_y)-half_square && point.y < int(center_y)+half_square)
+					if (point.x > int(center_x) - half_square && point.x < int(center_x) + half_square && point.y > int(center_y) - half_square && point.y < int(center_y) + half_square)
 					{
-						dc.SetPixel(point, RGB(255, 255, 0));
+						dc.SetPixel(point, colors[0]);
 					}
 
 
@@ -198,7 +198,68 @@ void PlotArea::OnPaint()
 					HBITMAP old_bitmap = (HBITMAP)cdc.SelectObject(bitmap);
 
 					{
-						CBrush white_brush(RGB(255, 255, 255));
+						CBrush white_brush(colors[9]);
+
+						HBITMAP old_brush = (HBITMAP)cdc.SelectObject(white_brush);
+
+						cdc.FillRect(&rectangle, &white_brush);
+
+						SelectObject(cdc, old_brush);
+					}
+
+					Plot(cdc);
+
+					BOOL result = dc.BitBlt(0, 0, rectangle.Width(), rectangle.Height(), &cdc, 0, 0, SRCCOPY);
+										
+
+					SelectObject(cdc, old_bitmap);
+
+					DeleteObject(bitmap);
+
+					bitmap = nullptr;
+				}
+			}
+		}
+
+		//in_paint = false;
+	}
+
+}
+
+void PlotArea::DrawPicture()
+{
+	//if (!in_paint)
+	{
+		//in_paint = true;
+
+		CRect rectangle;
+
+		GetClientRect(&rectangle);
+
+		CPaintDC dc(this);
+
+		{
+			CDC cdc;
+
+			BOOL result = cdc.CreateCompatibleDC(&dc);
+
+			if (result == TRUE)
+			{
+				if (bitmap != nullptr)
+				{
+					DeleteObject(bitmap);
+
+					bitmap = nullptr;
+				}
+
+				bitmap = CreateCompatibleBitmap(dc, rectangle.Width(), rectangle.Height());
+
+				if (bitmap != nullptr)
+				{
+					HBITMAP old_bitmap = (HBITMAP)cdc.SelectObject(bitmap);
+
+					{
+						CBrush white_brush(colors[9]);
 
 						HBITMAP old_brush = (HBITMAP)cdc.SelectObject(white_brush);
 
@@ -226,7 +287,7 @@ void PlotArea::OnPaint()
 								HBITMAP old_bitmap = (HBITMAP)file_cdc.SelectObject(file_bitmap);
 
 								{
-									CBrush white_brush(RGB(255, 255, 255));
+									CBrush white_brush(colors[9]);
 
 									HBITMAP old_brush = (HBITMAP)file_cdc.SelectObject(white_brush);
 
@@ -246,7 +307,7 @@ void PlotArea::OnPaint()
 
 								auto date_time = COleDateTime::GetTickCount();
 
-								file_name.Format(CString(L"\\Plot%4d.%2d.%2d_%2d-%2d-%2d.png"), 
+								file_name.Format(CString(L"\\Plot%4d.%2d.%2d_%2d-%2d-%2d.png"),
 									date_time.GetYear(), date_time.GetMonth(), date_time.GetDay(),
 									date_time.GetHour(), date_time.GetMinute(), date_time.GetSecond());
 
