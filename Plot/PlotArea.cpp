@@ -5,7 +5,7 @@ BEGIN_MESSAGE_MAP(PlotArea, CStatic)
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
-void PlotArea::Plot(CDC& dc)
+void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 {
 	if (list_x.size() != 0)
 	{
@@ -15,11 +15,7 @@ void PlotArea::Plot(CDC& dc)
 
 			auto list_x_i = list_x.begin();
 			auto list_y_i = list_y.begin();
-
-			CRect client_rectangle;
-
-			GetClientRect(&client_rectangle);
-
+			
 			double center_x = x_shift + (client_rectangle.Width() - x_shift) / 2.0;
 			double center_y = client_rectangle.Height() / 2.0;
 
@@ -174,7 +170,7 @@ void PlotArea::OnPaint()
 		CRect rectangle;
 
 		GetClientRect(&rectangle);
-
+		
 		CPaintDC dc(this);
 
 		{
@@ -207,7 +203,7 @@ void PlotArea::OnPaint()
 						SelectObject(cdc, old_brush);
 					}
 
-					Plot(cdc);
+					Plot(cdc, rectangle);
 
 					BOOL result = dc.BitBlt(0, 0, rectangle.Width(), rectangle.Height(), &cdc, 0, 0, SRCCOPY);
 										
@@ -228,9 +224,13 @@ void PlotArea::OnPaint()
 
 void PlotArea::DrawPicture()
 {
+	ShowWindow(SW_HIDE);
+
 	//if (!in_paint)
 	{
 		//in_paint = true;
+
+		CRect rectangle_2000(0, 0, 2000, 2000);
 
 		CRect rectangle;
 
@@ -268,9 +268,9 @@ void PlotArea::DrawPicture()
 						SelectObject(cdc, old_brush);
 					}
 
-					Plot(cdc);
+					Plot(cdc, rectangle);
 
-					BOOL result = dc.BitBlt(0, 0, rectangle.Width(), rectangle.Height(), &cdc, 0, 0, SRCCOPY);
+					BOOL result = dc.StretchBlt(0, 0, rectangle_2000.Width(), rectangle_2000.Height(), &cdc, int(x_shift), 0, rectangle.Width()-int(x_shift), rectangle.Height(), SRCCOPY);
 
 					{
 						CDC file_cdc;
@@ -280,7 +280,7 @@ void PlotArea::DrawPicture()
 						if (result == TRUE)
 						{
 
-							file_bitmap = CreateCompatibleBitmap(dc, rectangle.Height(), rectangle.Height());
+							file_bitmap = CreateCompatibleBitmap(dc, rectangle_2000.Height(), rectangle_2000.Height());
 
 							if (file_bitmap != nullptr)
 							{
@@ -296,7 +296,7 @@ void PlotArea::DrawPicture()
 									SelectObject(file_cdc, old_brush);
 								}
 
-								BOOL result = file_cdc.BitBlt(0, 0, rectangle.Height(), rectangle.Height(), &cdc, rectangle.Width() - rectangle.Height(), 0, SRCCOPY);
+								BOOL result = file_cdc.StretchBlt(0, 0, rectangle_2000.Height(), rectangle_2000.Height(), &cdc, int(x_shift), 0, rectangle.Width() - int(x_shift), rectangle.Height(), SRCCOPY);
 
 
 								image.Attach(file_bitmap);
@@ -333,4 +333,6 @@ void PlotArea::DrawPicture()
 
 		//in_paint = false;
 	}
+
+	ShowWindow(SW_SHOW);
 }
