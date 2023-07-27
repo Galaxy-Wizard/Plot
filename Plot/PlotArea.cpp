@@ -106,11 +106,33 @@ void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 						int(center_x + square_size / 2), int(center_y + square_size / 2)
 					);
 
-					CBrush brush(1, colors[8]);
+					CBrush brush(colors[8]);
 
-					dc.Draw3dRect(LPCRECT(rectangle), colors[8], colors[8]);
+					//dc.Draw3dRect(rectangle, colors[8], colors[8]);
 
-					dc.FillRect(LPCRECT(rectangle), &brush);
+					//dc.FillRect(rectangle, &brush);
+
+
+
+					TRIVERTEX        vertex[2];
+					GRADIENT_RECT    vertexes_rectangle;
+					vertex[0].x = rectangle.left;
+					vertex[0].y = rectangle.top;
+					vertex[0].Red = GetRValue(colors[8]) << 8;
+					vertex[0].Green = GetGValue(colors[8]) << 8;
+					vertex[0].Blue = GetBValue(colors[8]) << 8;
+					vertex[0].Alpha = 0x00;
+
+					vertex[1].x = rectangle.right;
+					vertex[1].y = rectangle.bottom;
+					vertex[1].Red = GetRValue(colors[9]) << 8;
+					vertex[1].Green = GetGValue(colors[9]) << 8;
+					vertex[1].Blue = GetBValue(colors[9]) << 8;
+					vertex[1].Alpha = 0x00;
+
+					vertexes_rectangle.UpperLeft = 0;
+					vertexes_rectangle.LowerRight = 1;
+					dc.GradientFill(vertex, 2, &vertexes_rectangle, 1, GRADIENT_FILL_RECT_H);
 				}
 
 				if (show_axes)
@@ -122,7 +144,7 @@ void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 					BOOL relult_2 = dc.LineTo(CPoint(int(center_x), int(square_size)));
 				}
 
-				dc.SetBkColor(colors[9]);
+				dc.SetBkColor(colors[10]);
 
 				CString string;
 
@@ -194,7 +216,7 @@ void PlotArea::OnPaint()
 					HBITMAP old_bitmap = (HBITMAP)cdc.SelectObject(bitmap);
 
 					{
-						CBrush white_brush(colors[9]);
+						CBrush white_brush(colors[10]);
 
 						HBITMAP old_brush = (HBITMAP)cdc.SelectObject(white_brush);
 
@@ -259,7 +281,7 @@ void PlotArea::DrawPicture()
 					HBITMAP old_bitmap = (HBITMAP)cdc.SelectObject(bitmap);
 
 					{
-						CBrush white_brush(colors[9]);
+						CBrush white_brush(colors[10]);
 
 						HBITMAP old_brush = (HBITMAP)cdc.SelectObject(white_brush);
 
@@ -287,7 +309,7 @@ void PlotArea::DrawPicture()
 								HBITMAP old_bitmap = (HBITMAP)file_cdc.SelectObject(file_bitmap);
 
 								{
-									CBrush white_brush(colors[9]);
+									CBrush white_brush(colors[10]);
 
 									HBITMAP old_brush = (HBITMAP)file_cdc.SelectObject(white_brush);
 

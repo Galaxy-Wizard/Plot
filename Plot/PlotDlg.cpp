@@ -133,9 +133,9 @@ BOOL CPlotDlg::OnInitDialog()
 	colors[6] = RGB(0, 0, 0);
 	colors[7] = RGB(0, 0, 0);
 
-	colors[8] = RGB(0, 0, 255);
-	colors[9] = RGB(255, 255, 255);
-	colors[10] = RGB(0, 0, 0);
+	colors[8] = RGB(255, 0, 0);
+	colors[9] = RGB(0, 0, 255);
+	colors[10] = RGB(255, 255, 255);
 	colors[11] = RGB(0, 0, 0);
 
 	colors[12] = RGB(0, 0, 0);
@@ -501,10 +501,10 @@ void CPlotDlg::OnBnClickedButtonColors()
 
 	if (result == IDOK)
 	{
-		auto clors_vector = color_dialog.GetSavedCustomColors();
+		auto colors_vector = color_dialog.GetSavedCustomColors();
 		for (size_t counter = 0; counter < 16; counter++)
 		{
-			colors[counter] = clors_vector[counter];
+			colors[counter] = colors_vector[counter];
 		}
 	}
 }
