@@ -10,6 +10,8 @@ protected:
     std::list<double> list_x;
     std::list<double> list_y;
 
+    std::vector<COLORREF> point_color;
+
     double scale;
 
     HBITMAP bitmap;
@@ -28,27 +30,6 @@ public:
 
     PlotArea() : CStatic(), show_axes(false), scale(1.0), bitmap(nullptr), in_paint(false)
     {
-        colors.resize(16);
-
-        colors[0] = RGB(255, 255, 0);
-        colors[1] = RGB(0, 0, 0);
-        colors[2] = RGB(0, 0, 0);
-        colors[3] = RGB(0, 0, 0);
-
-        colors[4] = RGB(0, 0, 0);
-        colors[5] = RGB(0, 0, 0);
-        colors[6] = RGB(0, 0, 0);
-        colors[7] = RGB(0, 0, 0);
-
-        colors[8] = RGB(255, 0, 0);
-        colors[9] = RGB(0, 0, 255);
-        colors[10] = RGB(255, 255, 255);
-        colors[11] = RGB(0, 0, 0);
-
-        colors[12] = RGB(0, 0, 0);
-        colors[13] = RGB(0, 0, 0);
-        colors[14] = RGB(0, 0, 0);
-        colors[15] = RGB(0, 0, 0);
     }
 
     ~PlotArea()
@@ -61,10 +42,11 @@ public:
         }
     }
 
-    void SetLists(std::list<double> &list_x_p, std::list<double> &list_y_p)
+    void SetLists(std::list<double> &list_x_p, std::list<double> &list_y_p, std::vector<COLORREF> &point_color_p)
     {
         list_x = list_x_p;
         list_y = list_y_p;
+        point_color = point_color_p;
     }
 
     void SetColors(std::vector<COLORREF> & colors_p)
@@ -80,6 +62,6 @@ public:
 
     void Plot(CDC &dc, CRect client_rectangle);
 
-    void DrawPicture();
+    CString DrawPicture();
 };
 

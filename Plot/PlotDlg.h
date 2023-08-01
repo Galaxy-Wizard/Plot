@@ -30,11 +30,14 @@ protected:
 
 	std::list<double> list_x;
 	std::list<double> list_y;
+	std::vector<COLORREF> point_color;
 	double original_list_size;
 
 	const double x_shift = 400.0;
 
 	std::vector<COLORREF> colors;
+
+	void InitializeApplication();
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
@@ -45,8 +48,6 @@ public:
 	afx_msg void OnBnClickedButtonCalculate();
 	afx_msg void OnBnClickedButtonPlot();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-
-	void Calculate();
 
 	CEdit starting_value;
 	CEdit ending_value;
@@ -65,6 +66,35 @@ public:
 	CButton allow_drawing;
 	CButton show_axes;
 	CStatic points_quantity;
+
+	CButton check_1;
+	CButton check_2;
+	CButton check_3;
+	CButton check_4;
+	CButton check_5;
+	CButton check_6;
+	CButton check_7;
+	CButton check_8;
+	CButton check_9;
+
 	afx_msg void OnBnClickedButtonColors();
 	afx_msg void OnBnClickedButtonSave();
+	afx_msg void OnBnClickedButtonDefaults();
+
+	CEdit edit_1;
+	CEdit edit_2;
+	CEdit edit_3;
+	CEdit edit_4;
+	CEdit edit_5;
+	CEdit edit_6;
+	CEdit edit_7;
+	CEdit edit_8;
+	CEdit edit_9;
+
+	afx_msg void OnBnClickedButtonAnimate();
+	CEdit edit_10;
+
+	void Calculate();
+	void Plot();
+	CString Save();
 };

@@ -19,6 +19,9 @@ void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 			double center_x = x_shift + (client_rectangle.Width() - x_shift) / 2.0;
 			double center_y = client_rectangle.Height() / 2.0;
 
+			double center_x_zeroed = center_x - x_shift;
+			double center_y_zeroed = center_y;
+
 			double maximum_x(0.0);
 			double minimum_x(0.0);
 
@@ -88,13 +91,13 @@ void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 			{
 				double square_size(0.0);
 
-				if (center_x > center_y)
+				if (center_x_zeroed > center_y_zeroed)
 				{
-					square_size = center_y * 2.0;
+					square_size = center_y_zeroed * 2.0;
 				}
 				else
 				{
-					square_size = center_x * 2.0;
+					square_size = center_x_zeroed * 2.0;
 				}
 
 				scale = square_size / absolute_maximum;
@@ -148,19 +151,27 @@ void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 
 				CString string;
 
-				string.Format(CString(L"Scale: %.4f"), scale, *list_x_i, *list_y_i);
+				string.Format(CString(L"Scale: %.4f"), scale);
 
 				dc.TextOutW(10, 12, string);
 
 				for (size_t counter = 0; counter < size; counter++)
 				{
-					CPoint point(int(center_x + scale * (*list_x_i)), int(center_y - scale * (*list_y_i)));
+					CPoint point_zeroed(int(center_x_zeroed + scale * (*list_x_i)), int(center_y_zeroed - scale * (*list_y_i)));
 
 					auto half_square = int(square_size) / 2;
 
-					if (point.x > int(center_x) - half_square && point.x < int(center_x) + half_square && point.y > int(center_y) - half_square && point.y < int(center_y) + half_square)
+					if (
+						(point_zeroed.x > int(center_x_zeroed) - half_square) && (point_zeroed.x < int(center_x_zeroed) + half_square)
+						&&
+						(point_zeroed.y > int(center_y_zeroed) - half_square) && (point_zeroed.y < int(center_y_zeroed) + half_square))
 					{
-						dc.SetPixel(point, colors[0]);
+						auto point(point_zeroed);
+
+						point.x += LONG(x_shift);
+						point.y += 0;
+
+						dc.SetPixel(point, point_color.at(counter));
 					}
 
 
@@ -244,8 +255,10 @@ void PlotArea::OnPaint()
 
 }
 
-void PlotArea::DrawPicture()
+CString PlotArea::DrawPicture()
 {
+	CString result_file_name;
+
 	ShowWindow(SW_HIDE);
 
 	//if (!in_paint)
@@ -333,7 +346,9 @@ void PlotArea::DrawPicture()
 									date_time.GetYear(), date_time.GetMonth(), date_time.GetDay(),
 									date_time.GetHour(), date_time.GetMinute(), date_time.GetSecond());
 
-								HRESULT saving_result = image.Save(CStringW(path.c_str()) + file_name);
+								result_file_name = CStringW(path.c_str()) + file_name;
+
+								HRESULT saving_result = image.Save(result_file_name);
 
 								image.Detach();
 
@@ -357,4 +372,6 @@ void PlotArea::DrawPicture()
 	}
 
 	ShowWindow(SW_SHOW);
+
+	return result_file_name;
 }
