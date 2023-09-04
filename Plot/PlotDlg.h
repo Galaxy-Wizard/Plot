@@ -108,4 +108,6 @@ public:
 
 	CEdit edit_x_t;
 	CEdit edit_y_t;
+
+	bool formula_is_correct;
 };

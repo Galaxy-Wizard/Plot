@@ -116,11 +116,18 @@ double ParserSettings::getNumberFromLetter(char symb, double x_value)
 		if (it != Constants.end())
 			return Constants.at(symb);
 		else
+		{
+			throw IncorrectSyntax("Unknown variable");
+
 			return 1;
+		}
 	}
 
 	else
 		return x_value;
+
+	throw IncorrectSyntax("Unknown variable");
+
 	return 0.0;
 }
 

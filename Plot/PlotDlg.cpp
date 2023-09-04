@@ -19,7 +19,7 @@
 #include "SMP\SMPExceptions.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
+//#define new DEBUG_NEW
 #endif
 
 int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
@@ -164,6 +164,8 @@ BOOL CPlotDlg::OnInitDialog()
 	edit_x_t.SetWindowTextW(L" - 1.0 * t * sin(3.1415 * t / 4.0)");
 	edit_y_t.SetWindowTextW(L" 1.0 * t * cos(3.1415 * t / 4.0)");
 
+	formula_is_correct = true;
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -207,9 +209,68 @@ double CPlotDlg::x(double t)
 {
 	double result(0.0);
 
-	X_Expression.setXValue(t);
+	try
+	{
+		X_Expression.setXValue(t);
 
-	result = X_Expression.getResult();
+		result = X_Expression.getResult();
+	}
+	
+	catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::IncorrectSyntax& exp) //That`s gonna throw IncorrectSyntax: x^
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::MathError& exp) //That throwed if you break math rules: (-4) ^ (1 / 4) or 1 / 0
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::RecursionException& exp) //That throwed if your expression uses other expression that has reference to first one
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::InvalidBracketsCount& exp) //That`s gonna throw InvalidBracketsCount: ((2 + 1) * x
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::IncorrectArgument& exp) //That throwed when you use incorrect arguments with function: asin(10) or sqrt(-4)
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::ConversionError& exp) //That`s gonna throw ConversionError: x.23 or x,
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
 
 	return result;
 }
@@ -217,10 +278,69 @@ double CPlotDlg::x(double t)
 double CPlotDlg::y(double t)
 {
 	double result(0.0);
+	
+	try
+	{
+		Y_Expression.setXValue(t);
 
-	Y_Expression.setXValue(t);
+		result = Y_Expression.getResult();
+	}
+	
+	catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
+	{
+		formula_is_correct = false;
 
-	result = Y_Expression.getResult();
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::IncorrectSyntax& exp) //That`s gonna throw IncorrectSyntax: x^
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::MathError& exp) //That throwed if you break math rules: (-4) ^ (1 / 4) or 1 / 0
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::RecursionException& exp) //That throwed if your expression uses other expression that has reference to first one
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::InvalidBracketsCount& exp) //That`s gonna throw InvalidBracketsCount: ((2 + 1) * x
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::IncorrectArgument& exp) //That throwed when you use incorrect arguments with function: asin(10) or sqrt(-4)
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::ConversionError& exp) //That`s gonna throw ConversionError: x.23 or x,
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
 
 	return result;
 }
@@ -232,6 +352,8 @@ void CPlotDlg::OnBnClickedButtonCalculate()
 
 void CPlotDlg::Calculate()
 {
+	formula_is_correct = true;
+
 	CString x_t;
 	CString y_t;
 
@@ -243,10 +365,65 @@ void CPlotDlg::Calculate()
 		X_Expression.setExpression(CStringA(x_t).GetBuffer());
 		Y_Expression.setExpression(CStringA(y_t).GetBuffer());
 	}
-	catch (...)
+	catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
 	{
-		AfxMessageBox(L"Incorrect expression in formula(s).", MB_ICONEXCLAMATION);
+		formula_is_correct = false;
 
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::IncorrectSyntax& exp) //That`s gonna throw IncorrectSyntax: x^
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::MathError& exp) //That throwed if you break math rules: (-4) ^ (1 / 4) or 1 / 0
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::RecursionException& exp) //That throwed if your expression uses other expression that has reference to first one
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::InvalidBracketsCount& exp) //That`s gonna throw InvalidBracketsCount: ((2 + 1) * x
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::IncorrectArgument& exp) //That throwed when you use incorrect arguments with function: asin(10) or sqrt(-4)
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::ConversionError& exp) //That`s gonna throw ConversionError: x.23 or x,
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+
+	if (!formula_is_correct)
+	{
 		return;
 	}
 
@@ -277,7 +454,28 @@ void CPlotDlg::Calculate()
 	for (double t = starting_t; t < ending_t - step_t * 0.5; t += step_t)
 	{
 		double value_x = x(t);
+
+		if (!formula_is_correct)
+		{
+			list_x.clear();
+			list_y.clear();
+
+			point_color.clear();
+
+			return;
+		}
+
 		double value_y = y(t);
+
+		if (!formula_is_correct)
+		{
+			list_x.clear();
+			list_y.clear();
+
+			point_color.clear();
+
+			return;
+		}
 
 		list_x.push_back(value_x);
 		list_y.push_back(value_y);
