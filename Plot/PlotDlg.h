@@ -8,6 +8,8 @@
 
 #include "PlotArea.h"
 
+#include "SMP\SimpleMathParser.h" 
+
 // CPlotDlg dialog
 class CPlotDlg : public CDialogEx
 {
@@ -97,4 +99,13 @@ public:
 	void Calculate();
 	void Plot();
 	CString Save();
+
+	smp::Expression X_Expression;
+	smp::Expression Y_Expression;
+
+	double x(double t);
+	double y(double t);
+
+	CEdit edit_x_t;
+	CEdit edit_y_t;
 };

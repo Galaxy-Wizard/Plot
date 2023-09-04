@@ -36,6 +36,12 @@
     <ClInclude Include="PlotArea.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SMP\SimpleMathParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SMP\SMPExceptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Plot.cpp">
@@ -48,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlotArea.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SMP\SimpleMathParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

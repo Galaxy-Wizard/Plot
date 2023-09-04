@@ -278,6 +278,8 @@
     <ClInclude Include="PlotArea.h" />
     <ClInclude Include="PlotDlg.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SMP\SimpleMathParser.h" />
+    <ClInclude Include="SMP\SMPExceptions.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -292,6 +294,7 @@
     <ClCompile Include="Plot.cpp" />
     <ClCompile Include="PlotArea.cpp" />
     <ClCompile Include="PlotDlg.cpp" />
+    <ClCompile Include="SMP\SimpleMathParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Plot.rc" />

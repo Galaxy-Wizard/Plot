@@ -15,6 +15,9 @@
 
 #include <GdiPlus.h>
 
+#include "SMP\SimpleMathParser.h" 
+#include "SMP\SMPExceptions.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -97,6 +100,8 @@ void CPlotDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT8, edit_8);
 	DDX_Control(pDX, IDC_EDIT9, edit_9);
 	DDX_Control(pDX, IDC_EDIT_ANIMATION_STEPS_QUANTITY, edit_10);
+	DDX_Control(pDX, IDC_EDIT_X_T, edit_x_t);
+	DDX_Control(pDX, IDC_EDIT_Y_T, edit_y_t);
 }
 
 BEGIN_MESSAGE_MAP(CPlotDlg, CDialogEx)
@@ -152,6 +157,13 @@ BOOL CPlotDlg::OnInitDialog()
 
 	InitializeApplication();
 
+	X_Expression.setNewXAlias('t');
+	Y_Expression.setNewXAlias('t');
+
+
+	edit_x_t.SetWindowTextW(L" - 1.0 * t * sin(3.1415 * t / 4.0)");
+	edit_y_t.SetWindowTextW(L" 1.0 * t * cos(3.1415 * t / 4.0)");
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -191,20 +203,24 @@ HCURSOR CPlotDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-double x(double t)
+double CPlotDlg::x(double t)
 {
 	double result(0.0);
 
-	result = -1.0 * t * sin(3.1415 * t / 4.0);
+	X_Expression.setXValue(t);
+
+	result = X_Expression.getResult();
 
 	return result;
 }
 
-double y(double t)
+double CPlotDlg::y(double t)
 {
 	double result(0.0);
 
-	result = 1.0 * t * cos(3.1415 * t / 4.0);
+	Y_Expression.setXValue(t);
+
+	result = Y_Expression.getResult();
 
 	return result;
 }
@@ -216,6 +232,24 @@ void CPlotDlg::OnBnClickedButtonCalculate()
 
 void CPlotDlg::Calculate()
 {
+	CString x_t;
+	CString y_t;
+
+	edit_x_t.GetWindowTextW(x_t);
+	edit_y_t.GetWindowTextW(y_t);
+
+	try
+	{
+		X_Expression.setExpression(CStringA(x_t).GetBuffer());
+		Y_Expression.setExpression(CStringA(y_t).GetBuffer());
+	}
+	catch (...)
+	{
+		AfxMessageBox(L"Incorrect expression in formula(s).", MB_ICONEXCLAMATION);
+
+		return;
+	}
+
 	srand((unsigned int)GetTickCount64());
 
 	list_x.clear();
