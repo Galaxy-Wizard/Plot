@@ -102,6 +102,7 @@ void CPlotDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_ANIMATION_STEPS_QUANTITY, edit_10);
 	DDX_Control(pDX, IDC_EDIT_X_T, edit_x_t);
 	DDX_Control(pDX, IDC_EDIT_Y_T, edit_y_t);
+	DDX_Control(pDX, IDC_EDIT_PICTURE_AREA_SIZE, edit_picture_area_size);
 }
 
 BEGIN_MESSAGE_MAP(CPlotDlg, CDialogEx)
@@ -211,17 +212,15 @@ double CPlotDlg::x(double t)
 
 	try
 	{
-		X_Expression.setXValue(t);
-
-		result = X_Expression.getResult();
+		result = X_Expression.getResult(t);
 	}
-	
-	catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
-	{
-		formula_is_correct = false;
 
-		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
-	}
+	//catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
+	//{
+	//	formula_is_correct = false;
+
+	//	AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	//}
 
 	catch (smp::IncorrectSyntax& exp) //That`s gonna throw IncorrectSyntax: x^
 	{
@@ -251,12 +250,12 @@ double CPlotDlg::x(double t)
 		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
 	}
 
-	catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
-	{
-		formula_is_correct = false;
+	//catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
+	//{
+	//	formula_is_correct = false;
 
-		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
-	}
+	//	AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	//}
 
 	catch (smp::IncorrectArgument& exp) //That throwed when you use incorrect arguments with function: asin(10) or sqrt(-4)
 	{
@@ -278,20 +277,18 @@ double CPlotDlg::x(double t)
 double CPlotDlg::y(double t)
 {
 	double result(0.0);
-	
+
 	try
 	{
-		Y_Expression.setXValue(t);
-
-		result = Y_Expression.getResult();
+		result = Y_Expression.getResult(t);
 	}
-	
-	catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
-	{
-		formula_is_correct = false;
 
-		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
-	}
+	//catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
+	//
+	//	formula_is_correct = false;
+
+	//	AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	//}
 
 	catch (smp::IncorrectSyntax& exp) //That`s gonna throw IncorrectSyntax: x^
 	{
@@ -321,12 +318,12 @@ double CPlotDlg::y(double t)
 		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
 	}
 
-	catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
-	{
-		formula_is_correct = false;
+	//catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
+	//{
+	//	formula_is_correct = false;
 
-		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
-	}
+	//	AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	//}
 
 	catch (smp::IncorrectArgument& exp) //That throwed when you use incorrect arguments with function: asin(10) or sqrt(-4)
 	{
@@ -365,12 +362,12 @@ void CPlotDlg::Calculate()
 		X_Expression.setExpression(CStringA(x_t).GetBuffer());
 		Y_Expression.setExpression(CStringA(y_t).GetBuffer());
 	}
-	catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
-	{
-		formula_is_correct = false;
+	//catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
+	//{
+	//	formula_is_correct = false;
 
-		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
-	}
+	//	AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	//}
 
 	catch (smp::IncorrectSyntax& exp) //That`s gonna throw IncorrectSyntax: x^
 	{
@@ -400,12 +397,12 @@ void CPlotDlg::Calculate()
 		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
 	}
 
-	catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
-	{
-		formula_is_correct = false;
+	//catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
+	//{
+	//	formula_is_correct = false;
 
-		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
-	}
+	//	AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	//}
 
 	catch (smp::IncorrectArgument& exp) //That throwed when you use incorrect arguments with function: asin(10) or sqrt(-4)
 	{
@@ -729,33 +726,48 @@ void CPlotDlg::Plot()
 {
 	if (allow_drawing.GetCheck() > 0)
 	{
-		if (plot_area.m_hWnd == nullptr)
+		CString picture_area_size_string;
+		edit_picture_area_size.GetWindowTextW(picture_area_size_string);
+
+		int picture_area_size_integer = _wtoi(picture_area_size_string.GetBuffer());
+
+		plot_area.SetAreaSize(picture_area_size_integer);
+
+		CRect client_rectangle;
+
+		GetClientRect(&client_rectangle);
+
+		double minimum_square(0.0);
+
+		double width = client_rectangle.Width() - plot_area.x_shift - x_shift;
+		double height = client_rectangle.Height();
+
+		if (width < height)
 		{
-			CRect client_rectangle;
+			minimum_square = width;
+		}
+		else
+		{
+			minimum_square = height;
+		}
 
-			GetClientRect(&client_rectangle);
+		if (picture_area_size_integer < minimum_square)
+		{
+			minimum_square = picture_area_size_integer;
+		}
 
-			double minimum_square(0.0);
-
-			double width = client_rectangle.Width() - plot_area.x_shift - x_shift;
-			double height = client_rectangle.Height();
-
-			if (width < height)
-			{
-				minimum_square = width;
-			}
-			else
-			{
-				minimum_square = height;
-			}
-
-			if (
-				plot_area.CreateEx(WS_EX_CLIENTEDGE, CString("Static"), CString("Plot area"), WS_CHILD, CRect(int(x_shift), 0, int(minimum_square + plot_area.x_shift + x_shift), int(minimum_square)), this, IDC_STATIC_PLOT_AREA)
-				== TRUE
-				)
-			{
-				plot_area.ShowWindow(SW_SHOW);
-			}
+		if (plot_area.m_hWnd != nullptr)
+		{
+			plot_area.DestroyWindow();
+			plot_area.m_hWnd = nullptr;
+		}
+		
+		if (
+			plot_area.CreateEx(WS_EX_CLIENTEDGE, CString("Static"), CString("Plot area"), WS_CHILD, CRect(int(x_shift), 0, int(minimum_square + plot_area.x_shift + x_shift), int(minimum_square)), this, IDC_STATIC_PLOT_AREA)
+			== TRUE
+			)
+		{
+			plot_area.ShowWindow(SW_SHOW);
 		}
 
 		plot_area.show_axes = show_axes.GetCheck();
@@ -816,7 +828,7 @@ void CPlotDlg::InitializeApplication()
 	rotation_angle_lines.SetWindowTextW(CString(L"1.0"));
 
 	spray_radius.SetWindowTextW(CString(L"0.007"));
-	spray_quantity.SetWindowTextW(CString(L"20.0"));
+	spray_quantity.SetWindowTextW(CString(L"10.0"));
 	spray_growing_factor.SetWindowTextW(CString(L"1619.0"));
 
 	allow_drawing.SetCheck(1);
@@ -830,7 +842,7 @@ void CPlotDlg::InitializeApplication()
 	colors.resize(16);
 
 	colors[0] = RGB(255, 255, 0);
-	colors[1] = RGB(0, 255, 255);
+	colors[1] = RGB(255, 255, 0);
 	colors[2] = RGB(0, 0, 0);
 	colors[3] = RGB(0, 0, 0);
 
@@ -839,7 +851,7 @@ void CPlotDlg::InitializeApplication()
 	colors[6] = RGB(0, 0, 0);
 	colors[7] = RGB(0, 0, 0);
 
-	colors[8] = RGB(255, 0, 0);
+	colors[8] = RGB(0, 0, 255);
 	colors[9] = RGB(0, 0, 255);
 	colors[10] = RGB(255, 255, 255);
 	colors[11] = RGB(0, 0, 0);
@@ -871,6 +883,8 @@ void CPlotDlg::InitializeApplication()
 	edit_8.SetWindowTextW(CString(L"0.0"));
 	edit_9.SetWindowTextW(CString(L"0.0"));
 	edit_10.SetWindowTextW(CString(L"10"));
+
+	edit_picture_area_size.SetWindowTextW(L"2000");
 }
 
 void CPlotDlg::OnBnClickedButtonAnimate()
@@ -892,7 +906,7 @@ void CPlotDlg::OnBnClickedButtonAnimate()
 		//AfxMessageBox(L"GdiplusStartup Failed.");
 	}
 
-	Gdiplus::Image *resulting_gif = nullptr;
+	Gdiplus::Image* resulting_gif = nullptr;
 	CStringW file_name;
 
 	Gdiplus::EncoderParameters encoderParameters;
@@ -913,7 +927,7 @@ void CPlotDlg::OnBnClickedButtonAnimate()
 
 	// Get the CLSID of the GIF encoder.
 	CLSID encoderClsid;
-	INT  result  = GetEncoderClsid(L"image/gif", &encoderClsid);
+	INT  result = GetEncoderClsid(L"image/gif", &encoderClsid);
 	if (result < 0)
 	{
 		//AfxMessageBox(L"The GIF encoder is not installed.");
@@ -923,7 +937,7 @@ void CPlotDlg::OnBnClickedButtonAnimate()
 		//WCHAR  strGuid[39];
 
 		//StringFromGUID2(encoderClsid, strGuid, 39);
-		
+
 		//AfxMessageBox(strGuid);
 	}
 
@@ -1043,7 +1057,7 @@ void CPlotDlg::OnBnClickedButtonAnimate()
 
 		Sleep(1000);
 	}
-		
+
 	for (auto i = images.begin(); i != images.end(); i++)
 	{
 		if (*i != nullptr)
@@ -1081,7 +1095,7 @@ void CPlotDlg::OnBnClickedButtonAnimate()
 			}
 		}
 	}
-	
+
 	if (resulting_gif != nullptr)
 	{
 		// Close the multiframe file.

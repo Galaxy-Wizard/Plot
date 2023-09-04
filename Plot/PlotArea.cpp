@@ -265,7 +265,7 @@ CString PlotArea::DrawPicture()
 	{
 		//in_paint = true;
 
-		CRect rectangle_2000(0, 0, 2000, 2000);
+		CRect rectangle_2000(0, 0, area_size, area_size);
 
 		CRect rectangle;
 

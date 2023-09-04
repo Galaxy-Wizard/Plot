@@ -12,6 +12,8 @@ protected:
 
     std::vector<COLORREF> point_color;
 
+    int area_size;
+
     double scale;
 
     HBITMAP bitmap;
@@ -28,7 +30,7 @@ protected:
 
 public:
 
-    PlotArea() : CStatic(), show_axes(false), scale(1.0), bitmap(nullptr), in_paint(false)
+    PlotArea() : CStatic(), show_axes(false), scale(1.0), bitmap(nullptr), in_paint(false), area_size(2000)
     {
     }
 
@@ -52,6 +54,11 @@ public:
     void SetColors(std::vector<COLORREF> & colors_p)
     {
         colors = colors_p;
+    }
+
+    void SetAreaSize(int area_size_p)
+    {
+        area_size = area_size_p;
     }
 
     const double x_shift = 200.0;

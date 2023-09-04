@@ -110,4 +110,6 @@ public:
 	CEdit edit_y_t;
 
 	bool formula_is_correct;
+
+	CEdit edit_picture_area_size;
 };

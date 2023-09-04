@@ -95,6 +95,8 @@ void ParserSettings::InitializeFunctions(FunctionsMap *funcs, bool addFunctions)
 		Functions["floor"] = std::floor;
 		Functions["ceil"] = std::ceil;
 		Functions["erf"] = std::erf;
+
+		Functions["exp"] = std::exp;
 	}
 }
 
@@ -215,11 +217,11 @@ void Oper::CutUnnecessary() //Whitespaces, special symbols and unreadable symbol
 
 void Oper::FunctionsMarker()
 {
-	int pos;
+	size_t pos;
 
 	for (auto &var : ps->Functions)
 	{
-		pos = value.find(var.first, 0);
+		pos = value.find(var.first, size_t(0));
 
 		std::string new_string = "({" + var.first + "}";
 
@@ -229,7 +231,7 @@ void Oper::FunctionsMarker()
 			{
 				value.replace(pos, var.first.length(), new_string);
 
-				int j = pos + var.first.size() + 4;
+				size_t j = pos + var.first.size() + size_t(4);
 				int opened_brackets = 1;
 
 				while (j < value.size() && opened_brackets != 0)
@@ -246,11 +248,11 @@ void Oper::FunctionsMarker()
 				else
 					value.push_back(')');
 
-				pos = value.find(var.first, pos + 3);
+				pos = value.find(var.first, pos + size_t(3));
 			}
 
 			else
-				pos = value.find(var.first, pos + 1);
+				pos = value.find(var.first, pos + size_t(1));
 		}
 	}
 }
@@ -356,7 +358,7 @@ void Oper::replaceIncorrectSymbols()
 
 	for (auto var : to_change_syms)
 	{
-		int to_change = value.find(var); //Find all ':'
+		auto to_change = value.find(var); //Find all ':'
 		while (to_change != std::string::npos)
 		{
 			if(var == ":")
@@ -366,7 +368,7 @@ void Oper::replaceIncorrectSymbols()
 			else if(var == "pi" && ps->Constants.find('p') != ps->Constants.end())
 				value.replace(to_change, var.length(), "p");
 
-			to_change = value.find(var, to_change + 1);
+			to_change = value.find(var, to_change + size_t(1));
 		}
 	}
 }
