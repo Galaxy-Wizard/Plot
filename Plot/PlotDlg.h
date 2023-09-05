@@ -112,4 +112,6 @@ public:
 	bool formula_is_correct;
 
 	CEdit edit_picture_area_size;
+	afx_msg void OnBnClickedButtonSaveDigital();
+	afx_msg void OnBnClickedButtonLoadDigital();
 };

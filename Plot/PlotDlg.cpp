@@ -115,6 +115,8 @@ BEGIN_MESSAGE_MAP(CPlotDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CPlotDlg::OnBnClickedButtonSave)
 	ON_BN_CLICKED(IDC_BUTTON_DEFAULTS, &CPlotDlg::OnBnClickedButtonDefaults)
 	ON_BN_CLICKED(IDC_BUTTON_ANIMATE, &CPlotDlg::OnBnClickedButtonAnimate)
+	ON_BN_CLICKED(IDC_BUTTON_SAVE_DIGITAL, &CPlotDlg::OnBnClickedButtonSaveDigital)
+	ON_BN_CLICKED(IDC_BUTTON_LOAD_DIGITAL, &CPlotDlg::OnBnClickedButtonLoadDigital)
 END_MESSAGE_MAP()
 
 
@@ -1122,4 +1124,206 @@ void CPlotDlg::OnBnClickedButtonAnimate()
 	}
 
 	Gdiplus::GdiplusShutdown(gdiplusToken);
+}
+
+
+void CPlotDlg::OnBnClickedButtonSaveDigital()
+{
+	std::filesystem::path path = std::filesystem::current_path();
+
+	CStringW file_name;
+
+	auto date_time = COleDateTime::GetTickCount();
+
+	file_name.Format(CString(L"\\Plot%4d.%2d.%2d_%2d-%2d-%2d.galaxy_plot"),
+		date_time.GetYear(), date_time.GetMonth(), date_time.GetDay(),
+		date_time.GetHour(), date_time.GetMinute(), date_time.GetSecond());
+
+	auto result_file_name = CStringW(path.c_str()) + file_name;
+
+	CFileDialog fd(FALSE, L"galaxy_plot", result_file_name);
+
+	if (fd.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	CString file_name_s = fd.GetPathName();
+
+	CStdioFile file_s;
+
+	if (file_s.Open(file_name_s, CStdioFile::modeCreate | CStdioFile::modeWrite | CStdioFile::typeText | CStdioFile::typeUnicode) != TRUE)
+	{
+		return;
+	}
+
+	CString data_string;
+	int8_t data_check;
+	COLORREF data_color;
+
+	starting_value.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	ending_value.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	step.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+
+	data_check = symmetric_x.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	data_check = symmetric_y.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	data_check = symmetric_xy.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+
+	rotation_angle.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+
+	data_check = lines.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+
+	lines_quantity.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	rotation_angle_lines.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+
+	spray_radius.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	spray_quantity.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	spray_growing_factor.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+
+	data_check = allow_drawing.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	
+	data_check = check_1.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	data_check = check_2.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	data_check = check_3.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	data_check = check_4.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	data_check = check_5.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	data_check = check_6.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	data_check = check_7.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	data_check = check_8.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+	data_check = check_9.GetCheck(); file_s.Write(&data_check, sizeof(int8_t));
+
+	edit_1.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_2.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_3.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_4.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_5.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_6.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_7.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_8.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_9.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_10.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+
+	edit_picture_area_size.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+
+	edit_x_t.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_y_t.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+
+	data_color = colors[0]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[1]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[2]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[3]; file_s.Write(&data_color, sizeof(COLORREF));
+
+	data_color = colors[4]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[5]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[6]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[7]; file_s.Write(&data_color, sizeof(COLORREF));
+
+	data_color = colors[8]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[9]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[10]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[11]; file_s.Write(&data_color, sizeof(COLORREF));
+
+	data_color = colors[12]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[13]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[14]; file_s.Write(&data_color, sizeof(COLORREF));
+	data_color = colors[15]; file_s.Write(&data_color, sizeof(COLORREF));
+
+	file_s.Close();
+}
+
+
+void CPlotDlg::OnBnClickedButtonLoadDigital()
+{
+	CFileDialog fd(TRUE);
+
+	if (fd.DoModal() != IDOK)
+	{
+		return;
+	}
+
+	CString file_name = fd.GetPathName();
+
+	CStdioFile file_l;
+
+	if (file_l.Open(file_name, CStdioFile::modeRead | CStdioFile::typeText | CStdioFile::typeUnicode) != TRUE)
+	{
+		return;
+	}
+
+	CString data_string;
+	int8_t data_check;
+	COLORREF data_color;
+
+	file_l.ReadString(data_string); starting_value.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); ending_value.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); step.SetWindowTextW(data_string);
+
+	file_l.Read(&data_check, sizeof(int8_t)); symmetric_x.SetCheck(data_check);
+	file_l.Read(&data_check, sizeof(int8_t)); symmetric_y.SetCheck(data_check);
+	file_l.Read(&data_check, sizeof(int8_t)); symmetric_xy.SetCheck(data_check);
+
+	file_l.ReadString(data_string); rotation_angle.SetWindowTextW(data_string);
+
+	file_l.Read(&data_check, sizeof(int8_t)); lines.SetCheck(data_check);
+
+	file_l.ReadString(data_string); lines_quantity.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); rotation_angle_lines.SetWindowTextW(data_string);
+
+	file_l.ReadString(data_string); spray_radius.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); spray_quantity.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); spray_growing_factor.SetWindowTextW(data_string);
+
+	file_l.Read(&data_check, sizeof(int8_t)); allow_drawing.SetCheck(data_check);
+
+	file_l.Read(&data_check, sizeof(int8_t)); check_1.SetCheck(data_check);
+	file_l.Read(&data_check, sizeof(int8_t)); check_2.SetCheck(data_check);
+	file_l.Read(&data_check, sizeof(int8_t)); check_3.SetCheck(data_check);
+	file_l.Read(&data_check, sizeof(int8_t)); check_4.SetCheck(data_check);
+	file_l.Read(&data_check, sizeof(int8_t)); check_5.SetCheck(data_check);
+	file_l.Read(&data_check, sizeof(int8_t)); check_6.SetCheck(data_check);
+	file_l.Read(&data_check, sizeof(int8_t)); check_7.SetCheck(data_check);
+	file_l.Read(&data_check, sizeof(int8_t)); check_8.SetCheck(data_check);
+	file_l.Read(&data_check, sizeof(int8_t)); check_9.SetCheck(data_check);
+
+	file_l.ReadString(data_string); edit_1.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_2.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_3.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_4.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_5.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_6.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_7.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_8.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_9.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_10.SetWindowTextW(data_string);
+
+	file_l.ReadString(data_string); edit_picture_area_size.SetWindowTextW(data_string);
+
+	file_l.ReadString(data_string); edit_x_t.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_y_t.SetWindowTextW(data_string);
+
+	colors.resize(16);
+
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[0] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[1] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[2] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[3] = data_color;
+
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[4] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[5] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[6] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[7] = data_color;
+
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[8] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[9] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[10] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[11] = data_color;
+
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[12] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[13] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[14] = data_color;
+	file_l.Read(&data_color, sizeof(COLORREF)); colors[15] = data_color;
+
+	file_l.Close();
+
+	plot_area.SetColors(colors);
 }
