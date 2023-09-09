@@ -44,14 +44,14 @@ public:
         }
     }
 
-    void SetLists(std::list<double> &list_x_p, std::list<double> &list_y_p, std::vector<COLORREF> &point_color_p)
+    void SetLists(std::list<double> list_x_p, std::list<double> list_y_p, std::vector<COLORREF> point_color_p)
     {
         list_x = list_x_p;
         list_y = list_y_p;
         point_color = point_color_p;
     }
 
-    void SetColors(std::vector<COLORREF> & colors_p)
+    void SetColors(std::vector<COLORREF> colors_p)
     {
         colors = colors_p;
     }

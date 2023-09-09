@@ -103,8 +103,8 @@ public:
 	smp::Expression X_Expression;
 	smp::Expression Y_Expression;
 
-	double x(double t);
-	double y(double t);
+	double x(double t, double a, double b);
+	double y(double t, double a, double b);
 
 	CEdit edit_x_t;
 	CEdit edit_y_t;
@@ -112,6 +112,24 @@ public:
 	bool formula_is_correct;
 
 	CEdit edit_picture_area_size;
+
 	afx_msg void OnBnClickedButtonSaveDigital();
 	afx_msg void OnBnClickedButtonLoadDigital();
+
+	CEdit edit_a_u;
+	CEdit edit_b_v;
+
+	smp::Expression A_Expression;
+	smp::Expression B_Expression;
+
+	double a(double u);
+	double b(double v);
+
+	CEdit edit_u_1;
+	CEdit edit_u_n;
+	CEdit edit_u_step;
+
+	CEdit edit_v_1;
+	CEdit edit_v_n;
+	CEdit edit_v_step;
 };

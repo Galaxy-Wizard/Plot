@@ -103,6 +103,15 @@ void CPlotDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_X_T, edit_x_t);
 	DDX_Control(pDX, IDC_EDIT_Y_T, edit_y_t);
 	DDX_Control(pDX, IDC_EDIT_PICTURE_AREA_SIZE, edit_picture_area_size);
+	DDX_Control(pDX, IDC_EDIT_A_U, edit_a_u);
+	DDX_Control(pDX, IDC_EDIT_B_U, edit_b_v);
+	DDX_Control(pDX, IDC_EDIT_U_1, edit_u_1);
+	DDX_Control(pDX, IDC_EDIT_U_N, edit_u_n);
+	DDX_Control(pDX, IDC_EDIT_U_STEP, edit_u_step);
+	DDX_Control(pDX, IDC_EDIT_V_1, edit_v_1);
+	DDX_Control(pDX, IDC_EDIT_V_N, edit_v_n);
+	DDX_Control(pDX, IDC_EDIT_V_STEP, edit_v_step);
+
 }
 
 BEGIN_MESSAGE_MAP(CPlotDlg, CDialogEx)
@@ -163,11 +172,19 @@ BOOL CPlotDlg::OnInitDialog()
 	X_Expression.setNewXAlias('t');
 	Y_Expression.setNewXAlias('t');
 
+	X_Expression.addConstant('a', 1);
+	Y_Expression.addConstant('a', 1);
+
+	X_Expression.addConstant('b', 1);
+	Y_Expression.addConstant('b', 1);
 
 	edit_x_t.SetWindowTextW(L" - 1.0 * t * sin(3.1415 * t / 4.0)");
 	edit_y_t.SetWindowTextW(L" 1.0 * t * cos(3.1415 * t / 4.0)");
 
 	formula_is_correct = true;
+
+	A_Expression.setNewXAlias('u');
+	B_Expression.setNewXAlias('v');
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -208,12 +225,15 @@ HCURSOR CPlotDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-double CPlotDlg::x(double t)
+double CPlotDlg::x(double t, double a, double b)
 {
 	double result(0.0);
 
 	try
 	{
+		X_Expression.addConstant('a', a);
+		X_Expression.addConstant('b', b);
+
 		result = X_Expression.getResult(t);
 	}
 
@@ -276,13 +296,152 @@ double CPlotDlg::x(double t)
 	return result;
 }
 
-double CPlotDlg::y(double t)
+double CPlotDlg::y(double t, double a, double b)
 {
 	double result(0.0);
 
 	try
 	{
+		Y_Expression.addConstant('a', a);
+		Y_Expression.addConstant('b', b);
+
 		result = Y_Expression.getResult(t);
+	}
+
+	//catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
+	//
+	//	formula_is_correct = false;
+
+	//	AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	//}
+
+	catch (smp::IncorrectSyntax& exp) //That`s gonna throw IncorrectSyntax: x^
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::MathError& exp) //That throwed if you break math rules: (-4) ^ (1 / 4) or 1 / 0
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::RecursionException& exp) //That throwed if your expression uses other expression that has reference to first one
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::InvalidBracketsCount& exp) //That`s gonna throw InvalidBracketsCount: ((2 + 1) * x
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	//catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
+	//{
+	//	formula_is_correct = false;
+
+	//	AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	//}
+
+	catch (smp::IncorrectArgument& exp) //That throwed when you use incorrect arguments with function: asin(10) or sqrt(-4)
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::ConversionError& exp) //That`s gonna throw ConversionError: x.23 or x,
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	return result;
+}
+
+double CPlotDlg::a(double u)
+{
+	double result(0.0);
+
+	try
+	{
+		result = A_Expression.getResult(u);
+	}
+
+	//catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
+	//{
+	//	formula_is_correct = false;
+
+	//	AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	//}
+
+	catch (smp::IncorrectSyntax& exp) //That`s gonna throw IncorrectSyntax: x^
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::MathError& exp) //That throwed if you break math rules: (-4) ^ (1 / 4) or 1 / 0
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::RecursionException& exp) //That throwed if your expression uses other expression that has reference to first one
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::InvalidBracketsCount& exp) //That`s gonna throw InvalidBracketsCount: ((2 + 1) * x
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	//catch (smp::MathFunctionCrash& exp) //Common kind of function erros, can be throwed only with inheritor
+	//{
+	//	formula_is_correct = false;
+
+	//	AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	//}
+
+	catch (smp::IncorrectArgument& exp) //That throwed when you use incorrect arguments with function: asin(10) or sqrt(-4)
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	catch (smp::ConversionError& exp) //That`s gonna throw ConversionError: x.23 or x,
+	{
+		formula_is_correct = false;
+
+		AfxMessageBox(CString("Incorrect expression in formula(s). ") + CString(exp.what()), MB_ICONEXCLAMATION);
+	}
+
+	return result;
+}
+
+double CPlotDlg::b(double v)
+{
+	double result(0.0);
+
+	try
+	{
+		result = B_Expression.getResult(v);
 	}
 
 	//catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
@@ -359,10 +518,19 @@ void CPlotDlg::Calculate()
 	edit_x_t.GetWindowTextW(x_t);
 	edit_y_t.GetWindowTextW(y_t);
 
+	CString a_u;
+	CString b_v;
+
+	edit_a_u.GetWindowTextW(a_u);
+	edit_b_v.GetWindowTextW(b_v);
+
 	try
 	{
 		X_Expression.setExpression(CStringA(x_t).GetBuffer());
 		Y_Expression.setExpression(CStringA(y_t).GetBuffer());
+
+		A_Expression.setExpression(CStringA(a_u).GetBuffer());
+		B_Expression.setExpression(CStringA(b_v).GetBuffer());
 	}
 	//catch (smp::InvalidExpression& exp) //Base kind of any excecption (parent class for all exceptions in smp)
 	//{
@@ -450,47 +618,96 @@ void CPlotDlg::Calculate()
 		return;
 	}
 
-	for (double t = starting_t; t < ending_t - step_t * 0.5; t += step_t)
+
+	CString starting_value_v_string;
+	CString ending_value_v_string;
+	CString step_v_string;
+
+	edit_v_1.GetWindowTextW(starting_value_v_string);
+	edit_v_n.GetWindowTextW(ending_value_v_string);
+	edit_v_step.GetWindowTextW(step_v_string);
+
+	double starting_v(_wtof(starting_value_v_string));
+	double ending_v(_wtof(ending_value_v_string));
+	double step_v(_wtof(step_v_string));
+
+	if (step_v == 0.0)
 	{
-		double value_x = x(t);
-
-		if (!formula_is_correct)
-		{
-			list_x.clear();
-			list_y.clear();
-
-			point_color.clear();
-
-			return;
-		}
-
-		double value_y = y(t);
-
-		if (!formula_is_correct)
-		{
-			list_x.clear();
-			list_y.clear();
-
-			point_color.clear();
-
-			return;
-		}
-
-		list_x.push_back(value_x);
-		list_y.push_back(value_y);
-
-		auto weight_number = (ending_t - starting_t) / step_t;
-		auto weight = (t / step_t) / weight_number;
-
-		point_color.push_back
-		(
-			RGB(
-				BYTE(((GetRValue(colors[0]) * weight + GetRValue(colors[1]) * (1 - weight)))),
-				BYTE(((GetGValue(colors[0]) * weight + GetGValue(colors[1]) * (1 - weight)))),
-				BYTE(((GetBValue(colors[0]) * weight + GetBValue(colors[1]) * (1 - weight))))
-			)
-		);
+	//	return;
 	}
+
+
+
+	CString starting_value_u_string;
+	CString ending_value_u_string;
+	CString step_u_string;
+
+	edit_u_1.GetWindowTextW(starting_value_u_string);
+	edit_u_n.GetWindowTextW(ending_value_u_string);
+	edit_u_step.GetWindowTextW(step_u_string);
+
+	double starting_u(_wtof(starting_value_u_string));
+	double ending_u(_wtof(ending_value_u_string));
+	double step_u(_wtof(step_u_string));
+
+	if (step_u == 0.0)
+	{
+	//	return;
+	}
+
+	for (double u = starting_u; u < ending_u - step_u * 0.5; u+= step_u)
+	{
+		double value_a = a(u);
+
+		for (double v = starting_v; v < ending_v - step_v * 0.5; v+= step_v)
+		{
+			double value_b = b(v);
+
+			for (double t = starting_t; t < ending_t - step_t * 0.5; t += step_t)
+			{
+				double value_x = x(t, value_a, value_b);
+
+				if (!formula_is_correct)
+				{
+					list_x.clear();
+					list_y.clear();
+
+					point_color.clear();
+
+					return;
+				}
+
+				double value_y = y(t, value_a, value_b);
+
+				if (!formula_is_correct)
+				{
+					list_x.clear();
+					list_y.clear();
+
+					point_color.clear();
+
+					return;
+				}
+
+				list_x.push_back(value_x);
+				list_y.push_back(value_y);
+
+				auto weight_number = (ending_t - starting_t) / step_t;
+				auto weight = (t / step_t) / weight_number;
+
+				point_color.push_back
+				(
+					RGB(
+						BYTE(((GetRValue(colors[0]) * weight + GetRValue(colors[1]) * (1 - weight)))),
+						BYTE(((GetGValue(colors[0]) * weight + GetGValue(colors[1]) * (1 - weight)))),
+						BYTE(((GetBValue(colors[0]) * weight + GetBValue(colors[1]) * (1 - weight))))
+					)
+				);
+			}
+		}
+	}
+
+
 
 	if (list_x.size() != 0)
 	{
@@ -887,6 +1104,17 @@ void CPlotDlg::InitializeApplication()
 	edit_10.SetWindowTextW(CString(L"10"));
 
 	edit_picture_area_size.SetWindowTextW(L"2000");
+
+	edit_a_u.SetWindowTextW(L"1");
+	edit_b_v.SetWindowTextW(L"v");
+
+	edit_u_1.SetWindowTextW(L"1");
+	edit_u_n.SetWindowTextW(L"1.1");
+	edit_u_step.SetWindowTextW(L"0.1");
+
+	edit_v_1.SetWindowTextW(L"1");
+	edit_v_n.SetWindowTextW(L"1.1");
+	edit_v_step.SetWindowTextW(L"0.1");
 }
 
 void CPlotDlg::OnBnClickedButtonAnimate()
@@ -1228,6 +1456,17 @@ void CPlotDlg::OnBnClickedButtonSaveDigital()
 	data_color = colors[14]; file_s.Write(&data_color, sizeof(COLORREF));
 	data_color = colors[15]; file_s.Write(&data_color, sizeof(COLORREF));
 
+	edit_a_u.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_b_v.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+
+	edit_u_1.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_u_n.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_u_step.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+
+	edit_v_1.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_v_n.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+	edit_v_step.GetWindowTextW(data_string); file_s.WriteString(data_string); file_s.WriteString(L"\n");
+
 	file_s.Close();
 }
 
@@ -1322,6 +1561,18 @@ void CPlotDlg::OnBnClickedButtonLoadDigital()
 	file_l.Read(&data_color, sizeof(COLORREF)); colors[13] = data_color;
 	file_l.Read(&data_color, sizeof(COLORREF)); colors[14] = data_color;
 	file_l.Read(&data_color, sizeof(COLORREF)); colors[15] = data_color;
+
+
+	file_l.ReadString(data_string); edit_a_u.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_b_v.SetWindowTextW(data_string);
+
+	file_l.ReadString(data_string); edit_u_1.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_u_n.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_u_step.SetWindowTextW(data_string);
+
+	file_l.ReadString(data_string); edit_v_1.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_v_n.SetWindowTextW(data_string);
+	file_l.ReadString(data_string); edit_v_step.SetWindowTextW(data_string);
 
 	file_l.Close();
 
