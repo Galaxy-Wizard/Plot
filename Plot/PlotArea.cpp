@@ -100,7 +100,7 @@ void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 					square_size = center_x_zeroed * 2.0;
 				}
 
-				scale = square_size / absolute_maximum;
+				scale = square_size / 2 / absolute_maximum;
 
 				{
 					CRect rectangle

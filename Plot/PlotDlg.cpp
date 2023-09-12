@@ -907,7 +907,7 @@ void CPlotDlg::Calculate()
 
 	CString points_quantity_string;
 
-	points_quantity_string.Format(CString("Points quantity is 2 x %d"), int(list_x.size()));
+	points_quantity_string.Format(CString("Points quantity is %d"), int(list_x.size()));
 
 	points_quantity.SetWindowTextW(points_quantity_string);
 
