@@ -97,6 +97,14 @@ void ParserSettings::InitializeFunctions(FunctionsMap *funcs, bool addFunctions)
 		Functions["erf"] = std::erf;
 
 		Functions["exp"] = std::exp;
+
+		/*///Functions["exp"] = (Function)[](double argument)
+		{
+			if (abs(argument) > 700)
+				throw IncorrectArgument("exp`s argument must be in [-700;700]!", "exp", std::to_string(argument));
+			return std::exp(argument);
+		};
+		///*/
 	}
 }
 

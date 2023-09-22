@@ -99,6 +99,7 @@ public:
 	void Calculate();
 	void Plot();
 	CString Save();
+	void SaveValues();
 
 	smp::Expression X_Expression;
 	smp::Expression Y_Expression;

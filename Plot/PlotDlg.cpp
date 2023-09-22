@@ -1016,6 +1016,7 @@ void CPlotDlg::OnBnClickedButtonColors()
 void CPlotDlg::OnBnClickedButtonSave()
 {
 	Save();
+	SaveValues();
 }
 
 CString  CPlotDlg::Save()
@@ -1577,4 +1578,54 @@ void CPlotDlg::OnBnClickedButtonLoadDigital()
 	file_l.Close();
 
 	plot_area.SetColors(colors);
+}
+
+void CPlotDlg::SaveValues()
+{
+	std::filesystem::path path = std::filesystem::current_path();
+
+	CStringW file_name;
+
+	auto date_time = COleDateTime::GetTickCount();
+
+	file_name.Format(CString(L"\\Plot_values_%4d.%2d.%2d_%2d-%2d-%2d.txt"),
+		date_time.GetYear(), date_time.GetMonth(), date_time.GetDay(),
+		date_time.GetHour(), date_time.GetMinute(), date_time.GetSecond());
+
+	auto result_file_name = CStringW(path.c_str()) + file_name;
+
+	file_name = result_file_name;
+
+	CStdioFile file_s;
+
+	if (file_s.Open(file_name, CStdioFile::modeCreate | CStdioFile::modeWrite | CStdioFile::typeText | CStdioFile::typeUnicode) != TRUE)
+	{
+		return;
+	}
+
+	file_s.WriteString(L"x = [");
+
+	for (auto x = list_x.begin(); x != list_x.end(); x++)
+	{
+		CStringW s;
+		s.Format(L"%.4f ", *x);
+		file_s.WriteString(s);
+	}
+
+	file_s.WriteString(L"];\n");
+
+
+
+	file_s.WriteString(L"y = [");
+
+	for (auto y = list_y.begin(); y != list_y.end(); y++)
+	{
+		CStringW s;
+		s.Format(L"%.4f ", *y);
+		file_s.WriteString(s);
+	}
+
+	file_s.WriteString(L"];\n");
+
+	file_s.Close();
 }
