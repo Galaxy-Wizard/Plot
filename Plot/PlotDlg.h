@@ -133,4 +133,7 @@ public:
 	CEdit edit_v_1;
 	CEdit edit_v_n;
 	CEdit edit_v_step;
+
+	CEdit edit_scale_factor;
+	CEdit edit_static_scale;
 };

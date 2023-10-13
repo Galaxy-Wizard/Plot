@@ -112,6 +112,8 @@ void CPlotDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_V_N, edit_v_n);
 	DDX_Control(pDX, IDC_EDIT_V_STEP, edit_v_step);
 
+	DDX_Control(pDX, IDC_EDIT10, edit_scale_factor);
+	DDX_Control(pDX, IDC_EDIT11, edit_static_scale);
 }
 
 BEGIN_MESSAGE_MAP(CPlotDlg, CDialogEx)
@@ -914,6 +916,20 @@ void CPlotDlg::Calculate()
 	plot_area.SetLists(list_x, list_y, point_color);
 
 	plot_area.SetColors(colors);
+
+	CString scale_factor;
+	edit_scale_factor.GetWindowTextW(scale_factor);
+
+	double scale_factor_double = _wtof(scale_factor.GetBuffer());
+
+	plot_area.SetScaleFactor(scale_factor_double);
+
+	CString static_scale;
+	edit_static_scale.GetWindowTextW(static_scale);
+
+	double static_scale_double = _wtof(static_scale.GetBuffer());
+
+	plot_area.SetStaticScale(static_scale_double);
 }
 
 void CPlotDlg::OnSize(UINT nType, int cx, int cy)
@@ -1116,6 +1132,9 @@ void CPlotDlg::InitializeApplication()
 	edit_v_1.SetWindowTextW(L"1");
 	edit_v_n.SetWindowTextW(L"1.1");
 	edit_v_step.SetWindowTextW(L"0.1");
+
+	edit_scale_factor.SetWindowTextW(L"1.0");
+	edit_static_scale.SetWindowTextW(L"0.0");
 }
 
 void CPlotDlg::OnBnClickedButtonAnimate()

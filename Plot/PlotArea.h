@@ -15,6 +15,8 @@ protected:
     int area_size;
 
     double scale;
+    double scale_factor;
+    double static_scale;
 
     HBITMAP bitmap;
 
@@ -30,7 +32,7 @@ protected:
 
 public:
 
-    PlotArea() : CStatic(), show_axes(false), scale(1.0), bitmap(nullptr), in_paint(false), area_size(2000)
+    PlotArea() : CStatic(), show_axes(false), scale(1.0), bitmap(nullptr), in_paint(false), area_size(2000), scale_factor(1.0), static_scale(0.0)
     {
     }
 
@@ -59,6 +61,16 @@ public:
     void SetAreaSize(int area_size_p)
     {
         area_size = area_size_p;
+    }
+
+    void SetScaleFactor(double scale_factor_p)
+    {
+        scale_factor = scale_factor_p;
+    }
+
+    void SetStaticScale(double static_scale_p)
+    {
+        static_scale = static_scale_p;
     }
 
     const double x_shift = 200.0;
