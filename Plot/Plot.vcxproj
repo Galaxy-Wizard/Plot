@@ -304,6 +304,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Plot.ico" />
+    <Image Include="res\Plot2023. 4.22_ 6-44-17 - Copy - 256.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

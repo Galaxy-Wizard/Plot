@@ -74,5 +74,8 @@
     <Image Include="res\Plot.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\Plot2023. 4.22_ 6-44-17 - Copy - 256.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
