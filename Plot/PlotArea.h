@@ -24,6 +24,8 @@ protected:
 
     CImage image;
 
+    CCriticalSection PaintCriticalSection;
+
     std::vector<COLORREF> colors;
 
     DECLARE_MESSAGE_MAP()

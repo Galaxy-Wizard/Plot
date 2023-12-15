@@ -6,6 +6,7 @@
 #include "framework.h"
 #include "Plot.h"
 #include "PlotDlg.h"
+#include "LocationParameters.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -16,6 +17,7 @@
 
 BEGIN_MESSAGE_MAP(CPlotApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
+	ON_COMMAND(ID_MULTIPLEOBJECTS_LOCATION, &CPlotApp::OnMultipleobjectsLocation)
 END_MESSAGE_MAP()
 
 
@@ -105,3 +107,19 @@ BOOL CPlotApp::InitInstance()
 	return FALSE;
 }
 
+
+
+void CPlotApp::OnMultipleobjectsLocation()
+{
+	LocationParameters location_parameters;
+
+	if (m_pMainWnd != nullptr)
+	{
+		location_parameters.plot_dialog = (CPlotDlg*)m_pMainWnd;
+
+		if (location_parameters.DoModal() == IDOK)
+		{
+
+		}
+	}
+}

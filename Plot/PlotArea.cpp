@@ -203,10 +203,11 @@ void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 
 void PlotArea::OnPaint()
 {
-	//if (!in_paint)
-	{
-		//in_paint = true;
+	CSingleLock lock(&PaintCriticalSection);
 
+	lock.Lock();
+
+	{
 		CRect rectangle;
 
 		GetClientRect(&rectangle);
@@ -256,8 +257,6 @@ void PlotArea::OnPaint()
 				}
 			}
 		}
-
-		//in_paint = false;
 	}
 
 }
@@ -268,10 +267,7 @@ CString PlotArea::DrawPicture()
 
 	ShowWindow(SW_HIDE);
 
-	//if (!in_paint)
 	{
-		//in_paint = true;
-
 		CRect rectangle_2000(0, 0, area_size, area_size);
 
 		CRect rectangle;
@@ -374,8 +370,6 @@ CString PlotArea::DrawPicture()
 				}
 			}
 		}
-
-		//in_paint = false;
 	}
 
 	ShowWindow(SW_SHOW);
