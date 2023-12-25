@@ -114,6 +114,7 @@ void CPlotDlg::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_EDIT10, edit_scale_factor);
 	DDX_Control(pDX, IDC_EDIT11, edit_static_scale);
+	DDX_Control(pDX, IDC_STATIC_STATUS, current_status);
 }
 
 BEGIN_MESSAGE_MAP(CPlotDlg, CDialogEx)

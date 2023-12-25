@@ -136,4 +136,5 @@ public:
 
 	CEdit edit_scale_factor;
 	CEdit edit_static_scale;
+	CStatic current_status;
 };

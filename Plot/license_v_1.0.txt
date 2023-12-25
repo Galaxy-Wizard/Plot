@@ -1,0 +1,13 @@
+Galaxy Group license version 1.0.
+
+Galaxy Group grants you following rights:
+1. Commercial usage of the application after payments to Galaxy Group.
+2. Personal usage of the application with optional payments to Galaxy Group.
+3. Modifying the application's code to create binaries for as many platforms as it is possable with optional payments to Galaxy Group.
+4. Adding additional licensies after modifying the application's code with saving this license.
+
+Galaxy Group guarantees, that this application will not harm you device while using correctly.
+
+The original license is stored at https://galaxy.group.keenetic.link/license/license_v_1.0.txt
+
+Galaxy Group 01.04.2023.

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PlotArea.h"
+#include "PlotDlg.h"
 
 BEGIN_MESSAGE_MAP(PlotArea, CStatic)
 	ON_WM_PAINT()
@@ -181,7 +182,7 @@ void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 						dc.SetPixel(point, point_color.at(counter));
 					}
 
-
+					/*///
 					CString string;
 
 					string.Format(CString(L"%04d : (%.4f; %.4f)"), int(counter), *list_x_i, *list_y_i);
@@ -192,6 +193,7 @@ void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 					{
 						dc.TextOutW(10, text_point_y, string);
 					}
+					/*///
 
 					list_x_i++;
 					list_y_i++;

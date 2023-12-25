@@ -32,7 +32,7 @@ protected:
 
 public:
 
-    PlotArea() : CStatic(), show_axes(false), scale(1.0), bitmap(nullptr), in_paint(false), area_size(2000), scale_factor(1.0), static_scale(0.0)
+    PlotArea() : CStatic(), show_axes(false), scale(1.0), bitmap(nullptr), file_bitmap(nullptr), in_paint(false), area_size(2000), scale_factor(1.0), static_scale(0.0)
     {
     }
 
@@ -46,7 +46,7 @@ public:
         }
     }
 
-    void SetLists(std::list<double> list_x_p, std::list<double> list_y_p, std::vector<COLORREF> point_color_p)
+    void SetLists(const std::list<double> &list_x_p, const std::list<double> &list_y_p, const std::vector<COLORREF> &point_color_p)
     {
         list_x = list_x_p;
         list_y = list_y_p;
