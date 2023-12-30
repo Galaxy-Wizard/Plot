@@ -156,9 +156,9 @@ namespace smp //Simple Math Parser namespace
 
 		FunctionWrapper(Function func) : function_ptr(func), exp_ptr(nullptr) {}
 
-		FunctionWrapper() {}
+		FunctionWrapper(): function_ptr(nullptr), exp_ptr(nullptr) {}
 
-		FunctionWrapper(std::shared_ptr<Expression> ptr) : exp_ptr(ptr) {}
+		FunctionWrapper(std::shared_ptr<Expression> ptr) : function_ptr(nullptr), exp_ptr(ptr) {}
 
 		std::string getFunctionNotation();
 

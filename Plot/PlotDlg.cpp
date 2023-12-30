@@ -27,14 +27,14 @@ int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 	UINT  num = 0;          // number of image encoders
 	UINT  size = 0;         // size of the image encoder array in bytes
 
-	Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
+	Gdiplus::ImageCodecInfo* pImageCodecInfo = nullptr;
 
 	Gdiplus::GetImageEncodersSize(&num, &size);
 	if (size == 0)
 		return -1;  // Failure
 
 	pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
-	if (pImageCodecInfo == NULL)
+	if (pImageCodecInfo == nullptr)
 		return -1;  // Failure
 
 	GetImageEncoders(num, size, pImageCodecInfo);
@@ -163,7 +163,7 @@ BOOL CPlotDlg::OnInitDialog()
 	}
 
 	if (
-		plot_area.CreateEx(WS_EX_CLIENTEDGE, CString("Static"), CString("Plot area"), WS_CHILD, CRect(int(x_shift), 0, int(minimum_square + plot_area.x_shift + x_shift), int(minimum_square)), this, IDC_STATIC_PLOT_AREA)
+		plot_area.CreateEx(0, CString("Static"), CString("Plot area"), WS_CHILD, CRect(int(x_shift), 0, int(minimum_square + plot_area.x_shift + x_shift), int(minimum_square)), this, IDC_STATIC_PLOT_AREA)
 		== TRUE
 		)
 	{
@@ -936,20 +936,6 @@ void CPlotDlg::Calculate()
 void CPlotDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
-
-	if (plot_area.m_hWnd != nullptr)
-	{
-		if (!plot_area.in_paint)
-		{
-			if (
-				plot_area.DestroyWindow()
-				== TRUE
-				)
-			{
-
-			}
-		}
-	}
 }
 
 
@@ -1146,7 +1132,7 @@ void CPlotDlg::OnBnClickedButtonAnimate()
 	// Initialize GDI+.
 	Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 	ULONG_PTR gdiplusToken;
-	Gdiplus::Status status_start = Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+	Gdiplus::Status status_start = Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
 
 	if (status_start == Gdiplus::Ok)
 	{

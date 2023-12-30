@@ -3,6 +3,9 @@
 // Used by Plot.rc
 //
 #define IDD_PLOT_DIALOG                 102
+#define IDR_BYTECODE_COMPUTE 111
+#define IDR_BYTECODE_VERTEX 112
+#define IDR_BYTECODE_PIXEL 113
 #define IDR_MAINFRAME                   128
 #define IDC_BUTTON_CALCULATE            1000
 #define IDC_EDIT_STARTING_VALUE         1001

@@ -42,6 +42,9 @@
     <ClInclude Include="SMP\SMPExceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SharedConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Plot.cpp">
@@ -77,5 +80,10 @@
     <Image Include="res\Plot2023. 4.22_ 6-44-17 - Copy - 256.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="compute.hlsl" />
+    <FxCompile Include="pixel.hlsl" />
+    <FxCompile Include="vertex.hlsl" />
   </ItemGroup>
 </Project>
