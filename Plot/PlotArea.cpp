@@ -468,11 +468,11 @@ void PlotArea::InitShaders()
 		src = FindResource(GetCurrentModule(), MAKEINTRESOURCE(IDR_BYTECODE_COMPUTE), _T("ShaderObject"));
 		res = LoadResource(GetCurrentModule(), src);
 
-		result = pDevice->CreateComputeShader(
-			res, SizeofResource(AfxGetInstanceHandle(), src),
-			nullptr,
-			&computeShader);
-		assert(SUCCEEDED(result));
+		//result = pDevice->CreateComputeShader(
+		//	res, SizeofResource(AfxGetInstanceHandle(), src),
+		//	nullptr,
+		//	&computeShader);
+		//assert(SUCCEEDED(result));
 
 		if (res != nullptr)
 		{
@@ -501,26 +501,37 @@ void PlotArea::InitShaders()
 				nullptr, &vertexShader);
 			assert(SUCCEEDED(result));
 
-			D3D11_INPUT_ELEMENT_DESC inputDesc;
+			D3D11_INPUT_ELEMENT_DESC inputDesc[2];
 
-			inputDesc.SemanticName = "POSITION";
+			inputDesc[0].SemanticName = "POSITION";
 
-			inputDesc.SemanticIndex = 0;
+			inputDesc[0].SemanticIndex = 0;
 
-			inputDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+			inputDesc[0].Format = DXGI_FORMAT_R32G32_FLOAT;
 
-			inputDesc.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+			inputDesc[0].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 
-			inputDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			inputDesc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 
-			inputDesc.InputSlot = 0;
+			inputDesc[0].InputSlot = 0;
 
-			inputDesc.InstanceDataStepRate = 0;
+			inputDesc[0].InstanceDataStepRate = 0;
+
+			// Описание второго аргумента функции, аналогично
+			inputDesc[1].SemanticName = "COLOR";
+			inputDesc[1].SemanticIndex = 0;
+			// Цвет --- вектор из трёх 32-битных вещественных чисел
+			inputDesc[1].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+			// Второй параметр
+			inputDesc[1].InputSlot = 1;
+			inputDesc[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+			inputDesc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			inputDesc[1].InstanceDataStepRate = 0;
 
 			if (src != nullptr)
 			{
 				result = pDevice->CreateInputLayout(
-					&inputDesc, 1,
+					inputDesc, 2,
 					res, SizeofResource(AfxGetApp()->m_hInstance, src),
 					&inputLayout);
 				assert(SUCCEEDED(result));
@@ -564,10 +575,13 @@ void PlotArea::InitBuffers()
 
 	HRESULT result;
 
-	float* data = new float[2 * PARTICLE_COUNT];
+	float* data = new float[3 * PARTICLE_COUNT];
 
 	if (data != nullptr)
 	{
+		for (UINT i = 0; i < 3 * PARTICLE_COUNT; i++)
+			data[i] = 0.0f;
+
 		D3D11_SUBRESOURCE_DATA subresource;
 
 		subresource.pSysMem = data;
@@ -655,14 +669,63 @@ void PlotArea::InitBuffers()
 			assert(SUCCEEDED(result));
 		}
 
+		desc.ByteWidth = sizeof(3 * float(PARTICLE_COUNT));
+		// Цвета используются только в вершинном шейдере
+		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		// Цвет, в отличие от позиции и скорости --- 3 числа
+		desc.StructureByteStride = sizeof(float[3]);
+		// Инициализируем массив цветов
+		auto i_c = point_color.begin();
+
+		for (UINT i = 0; i < data_size; i++)
+		{
+
+			float r = 0;
+			float g = 0;
+			float b = 0;
+
+			if (i_c != point_color.end())
+			{
+				r = GetRValue(*i_c);
+				g = GetGValue(*i_c);
+				b = GetBValue(*i_c);
+				i_c++;
+
+				float maximum_float = float(255);
+				data[3 * i + 0] = r / maximum_float;
+				data[3 * i + 1] = g / maximum_float;
+				data[3 * i + 2] = b / maximum_float;
+			}
+		}
+
+
+		if (pDevice != nullptr)
+		{
+			result = pDevice->CreateBuffer(&desc, &subresource, &colorBuffer);
+			assert(SUCCEEDED(result));
+		}
+
 		delete[] data;
+
+		data = nullptr;
+
 	}
 }
 
 void PlotArea::DisposeBuffers()
 {
-	positionBuffer->Release();
-	velocityBuffer->Release();
+	if (positionBuffer != nullptr)
+	{
+		positionBuffer->Release();
+	}
+	if (velocityBuffer != nullptr)
+	{
+		velocityBuffer->Release();
+	}
+	if (colorBuffer != nullptr)
+	{
+		colorBuffer->Release();
+	}
 }
 
 void PlotArea::InitUAV()
@@ -756,27 +819,27 @@ void PlotArea::Frame()
 	{
 		pDeviceContext->ClearRenderTargetView(pRenderTargetView, clearColor);
 
-		UINT stride = sizeof(float[2]);
-		UINT offset = 0;
+		UINT stride[] = { sizeof(float[2]), sizeof(float[2]) };
+		UINT offset[] = {0, 0};
 
 		ID3D11Buffer* nullptrBuffer = nullptr;
 		ID3D11UnorderedAccessView* nullptrUAV = nullptr;
 
-		//pDeviceContext->IASetVertexBuffers(0, 1, &nullptrBuffer, &stride, &offset);
+		pDeviceContext->IASetVertexBuffers(0, 1, &nullptrBuffer, stride, offset);
 
-		//pDeviceContext->CSSetUnorderedAccessViews(0, 1, &positionUAV, nullptr);
+		pDeviceContext->CSSetUnorderedAccessViews(0, 1, &positionUAV, nullptr);
 
-		//pDeviceContext->Dispatch(PARTICLE_COUNT / NUMTHREADS, 1, 1);
+		pDeviceContext->Dispatch(PARTICLE_COUNT / NUMTHREADS, 1, 1);
 
-		//pDeviceContext->CSSetUnorderedAccessViews(0, 1, &nullptrUAV, nullptr);
+		pDeviceContext->CSSetUnorderedAccessViews(0, 1, &nullptrUAV, nullptr);
 
-		pDeviceContext->IASetVertexBuffers(0, 1, &positionBuffer, &stride, &offset);
+		pDeviceContext->IASetVertexBuffers(0, 1, &positionBuffer, stride, offset);
 
 		pDeviceContext->Draw(PARTICLE_COUNT, 0);
 
 		if (pSwapChain != nullptr)
 		{
-			pSwapChain->Present(0, 0);
+			pSwapChain->Present(1, 0);
 		}
 	}
 }

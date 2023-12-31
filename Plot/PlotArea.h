@@ -43,6 +43,7 @@ protected:
 
     ID3D11Buffer* positionBuffer;
     ID3D11Buffer* velocityBuffer;
+    ID3D11Buffer* colorBuffer;
 
     ID3D11UnorderedAccessView* positionUAV;
     ID3D11UnorderedAccessView* velocityUAV;
@@ -90,6 +91,7 @@ public:
 
         positionBuffer = nullptr;
         velocityBuffer = nullptr;
+        colorBuffer = nullptr;
 
         positionUAV = nullptr;
         velocityUAV = nullptr;

@@ -301,6 +301,7 @@
     <ResourceCompile Include="Plot.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="common.hlsli" />
     <None Include="res\Plot.rc2" />
   </ItemGroup>
   <ItemGroup>

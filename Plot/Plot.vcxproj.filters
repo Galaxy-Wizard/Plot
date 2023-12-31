@@ -72,6 +72,7 @@
     <None Include="res\Plot.rc2">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="common.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Plot.ico">
