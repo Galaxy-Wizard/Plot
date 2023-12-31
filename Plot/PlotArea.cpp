@@ -670,12 +670,12 @@ void PlotArea::InitBuffers()
 		}
 
 		desc.ByteWidth = 3 * PARTICLE_COUNT * sizeof(float);
-		// Цвета используются только в вершинном шейдере
 		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		// Цвет, в отличие от позиции и скорости --- 3 числа
 		desc.StructureByteStride = 3 * sizeof(float);
-		// Инициализируем массив цветов
 		auto i_c = point_color.begin();
+
+		for (UINT i = 0; i < 3 * PARTICLE_COUNT; i++)
+			data[i] = 0.0f;
 
 		for (UINT i = 0; i < data_size; i++)
 		{
@@ -686,16 +686,16 @@ void PlotArea::InitBuffers()
 
 			if (i_c != point_color.end())
 			{
-				r = GetRValue(*i_c);
-				g = GetGValue(*i_c);
-				b = GetBValue(*i_c);
+				r = float(GetRValue(*i_c));
+				g = float(GetGValue(*i_c));
+				b = float(GetBValue(*i_c));
 				i_c++;
-
-				float maximum_float = float(255);
-				data[3 * i + 0] = r / maximum_float;
-				data[3 * i + 1] = g / maximum_float;
-				data[3 * i + 2] = b / maximum_float;
 			}
+			
+			float maximum_float = float(256);
+			data[3 * i + 0] = r / maximum_float;
+			data[3 * i + 1] = g / maximum_float;
+			data[3 * i + 2] = b / maximum_float;
 		}
 
 
@@ -817,7 +817,7 @@ void PlotArea::Frame()
 	{
 		pDeviceContext->ClearRenderTargetView(pRenderTargetView, clearColor);
 
-		UINT stride[] = { sizeof(float[2]), sizeof(float[2]) };
+		UINT stride[] = { sizeof(float[2]), sizeof(float[3]) };
 		UINT offset[] = { 0, 0 };
 
 		ID3D11Buffer* nullptrBuffer = nullptr;
@@ -850,8 +850,8 @@ void PlotArea::InitSwapChain()
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 
-	swapChainDesc.BufferDesc.Width = 800;
-	swapChainDesc.BufferDesc.Height = 800;
+	swapChainDesc.BufferDesc.Width = 2000;
+	swapChainDesc.BufferDesc.Height = 2000;
 
 
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
