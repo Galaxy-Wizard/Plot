@@ -15,7 +15,7 @@ BEGIN_MESSAGE_MAP(PlotArea, CStatic)
 	ON_WM_TIMER()
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
-//	ON_WM_ERASEBKGND()
+	//	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 FLOAT color[] = { 0.25, 0.25, 0.25, 0.0 };
@@ -43,7 +43,7 @@ void PlotArea::Plot(CDC& dc, CRect client_rectangle)
 
 			auto list_x_i = list_x.begin();
 			auto list_y_i = list_y.begin();
-			
+
 			double center_x = x_shift + (client_rectangle.Width() - x_shift) / 2.0;
 			double center_y = client_rectangle.Height() / 2.0;
 
@@ -238,7 +238,7 @@ void PlotArea::OnPaint()
 		CRect rectangle;
 
 		GetClientRect(&rectangle);
-		
+
 		CPaintDC dc(this);
 
 		{
@@ -274,7 +274,7 @@ void PlotArea::OnPaint()
 					Plot(cdc, rectangle);
 
 					BOOL result = dc.BitBlt(0, 0, rectangle.Width(), rectangle.Height(), &cdc, 0, 0, SRCCOPY);
-										
+
 
 					SelectObject(cdc, old_bitmap);
 
@@ -334,7 +334,7 @@ CString PlotArea::DrawPicture()
 
 					Plot(cdc, rectangle);
 
-					BOOL result = dc.StretchBlt(0, 0, rectangle_2000.Width(), rectangle_2000.Height(), &cdc, int(x_shift), 0, rectangle.Width()-int(x_shift), rectangle.Height(), SRCCOPY);
+					BOOL result = dc.StretchBlt(0, 0, rectangle_2000.Width(), rectangle_2000.Height(), &cdc, int(x_shift), 0, rectangle.Width() - int(x_shift), rectangle.Height(), SRCCOPY);
 
 					{
 						CDC file_cdc;
@@ -566,7 +566,7 @@ void PlotArea::DisposeShaders()
 	{
 		pixelShader->Release();
 		pixelShader = nullptr;
-	}	
+	}
 }
 
 void PlotArea::InitBuffers()
@@ -602,7 +602,7 @@ void PlotArea::InitBuffers()
 
 		desc.MiscFlags = 0;
 
-		desc.StructureByteStride = sizeof(float[2]);
+		desc.StructureByteStride = 2 * sizeof(float);
 
 		if (list_x.size() == list_y.size() && list_x.size() != 0)
 		{
@@ -669,11 +669,11 @@ void PlotArea::InitBuffers()
 			assert(SUCCEEDED(result));
 		}
 
-		desc.ByteWidth = sizeof(3 * float(PARTICLE_COUNT));
+		desc.ByteWidth = 3 * PARTICLE_COUNT * sizeof(float);
 		// Цвета используются только в вершинном шейдере
 		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		// Цвет, в отличие от позиции и скорости --- 3 числа
-		desc.StructureByteStride = sizeof(float[3]);
+		desc.StructureByteStride = 3 * sizeof(float);
 		// Инициализируем массив цветов
 		auto i_c = point_color.begin();
 
@@ -708,7 +708,6 @@ void PlotArea::InitBuffers()
 		delete[] data;
 
 		data = nullptr;
-
 	}
 }
 
@@ -732,26 +731,25 @@ void PlotArea::InitUAV()
 {
 	HRESULT result;
 
-	
 	D3D11_UNORDERED_ACCESS_VIEW_DESC desc;
-	
+
 	desc.Format = DXGI_FORMAT_R32G32_FLOAT;
-	
+
 	desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-	
+
 	desc.Buffer.FirstElement = 0;
-	
+
 	desc.Buffer.NumElements = PARTICLE_COUNT;
-	
+
 	desc.Buffer.Flags = 0;
 
-	
+
 	if (pDevice != nullptr)
 	{
 		result = pDevice->CreateUnorderedAccessView(positionBuffer, &desc,
 			&positionUAV);
 		assert(!result);
-	
+
 		result = pDevice->CreateUnorderedAccessView(velocityBuffer, &desc,
 			&velocityUAV);
 		assert(!result);
@@ -820,7 +818,7 @@ void PlotArea::Frame()
 		pDeviceContext->ClearRenderTargetView(pRenderTargetView, clearColor);
 
 		UINT stride[] = { sizeof(float[2]), sizeof(float[2]) };
-		UINT offset[] = {0, 0};
+		UINT offset[] = { 0, 0 };
 
 		ID3D11Buffer* nullptrBuffer = nullptr;
 		ID3D11UnorderedAccessView* nullptrUAV = nullptr;
@@ -833,7 +831,9 @@ void PlotArea::Frame()
 
 		pDeviceContext->CSSetUnorderedAccessViews(0, 1, &nullptrUAV, nullptr);
 
-		pDeviceContext->IASetVertexBuffers(0, 1, &positionBuffer, stride, offset);
+		ID3D11Buffer* vertBuffers[] = { positionBuffer, colorBuffer };
+
+		pDeviceContext->IASetVertexBuffers(0, 2, vertBuffers, stride, offset);
 
 		pDeviceContext->Draw(PARTICLE_COUNT, 0);
 
