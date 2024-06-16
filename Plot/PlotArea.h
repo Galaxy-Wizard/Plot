@@ -143,7 +143,8 @@ public:
         static_scale = static_scale_p;
     }
 
-    const double x_shift = 200.0;
+    //const double x_shift = 200.0;
+    const double x_shift = 0.0;
 
     bool show_axes;
 
