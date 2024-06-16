@@ -69,7 +69,7 @@ BOOL CPlotApp::InitInstance()
 	// Change the registry key under which our settings are stored
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
-	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
+	SetRegistryKey(_T("Galaxy Group"));
 
 	CPlotDlg dlg;
 	m_pMainWnd = &dlg;
