@@ -213,7 +213,7 @@ void Oper::CutUnnecessary() //Whitespaces, special symbols and unreadable symbol
 	if (value[0] == '+')
 		value.erase(0);
 
-	for (int i = 0; i < value.size(); i++)
+	for (size_t i = 0; i < value.size(); i++)
 	{
 		if (!isLetter(value[i]) && !isDigit(value[i]) && !isServiceSymbol(value[i]))
 		{
@@ -274,7 +274,7 @@ void Oper::prepareString()
 
 	bool isFunction = false;
 
-	for (int i = 0; i < value.size(); i++)
+	for (size_t i = 0; i < value.size(); i++)
 	{
 		if (value[i] == '{')
 			isFunction = true;
@@ -617,7 +617,7 @@ void Expression::updateSubOpers()
 {
 	actions.clear();
 
-	int i = 0;
+	size_t i = 0;
 	if (value[i] != '-')
 		actions.push_back('+');
 
@@ -669,7 +669,7 @@ Multiplication_Oper::Multiplication_Oper(std::string value, std::shared_ptr<Pars
 double Multiplication_Oper::getResult(double x)
 {
 	double result = 1;
-	for (int i = 0; i < sub_opers.size(); i++)
+	for (size_t i = 0; i < sub_opers.size(); i++)
 	{
 		if (actions[i] == '*')
 			result *= sub_opers[i]->getResult(x);
@@ -698,7 +698,7 @@ void Multiplication_Oper::updateSubOpers()
 	actions.clear();
 	actions.push_back('*');
 
-	int i = 0;
+	size_t i = 0;
 	while (true)
 	{
 		int j = 0;
@@ -1039,7 +1039,7 @@ void Power_Oper::setExpression(std::string str)
 
 void Power_Oper::updateSubOpers()
 {
-	int i = 0;
+	size_t i = 0;
 	std::string power_base = "";
 	std::string power_factor = "";
 
@@ -1160,7 +1160,7 @@ double Function_Oper::getResult(double x) //You can add your functions there (Ch
 void Function_Oper::updateSubOpers()
 {
 	std::string argument;
-	int i = 0;
+	size_t i = 0;
 
 	while (value[i] != '(' && i < value.size())
 		i++;
